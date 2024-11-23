@@ -5,6 +5,7 @@ const KEY = {
   LIST: 'LIST',
   MAIN: 'MAIN',
   PROGRAM: 'PROGRAM',
+  QUERY: 'QUERY',
   SELECTION: 'SELECTION',
   SONG: 'SONG',
   SONGS: 'SONGS',

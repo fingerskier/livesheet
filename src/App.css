@@ -6,6 +6,13 @@
   align-items: center;
 }
 
+h1 {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
 
 .back.button {
   position: absolute;
@@ -17,6 +24,7 @@
   border: thick none white;
   border-radius: 1rem;
   padding: 0.5rem;
+  text-decoration: none;
 }
 
 .back.button:hover {

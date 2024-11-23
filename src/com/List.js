@@ -1,13 +1,15 @@
 import React from 'react'
 import useLocalStorage from '../hook/useLocalStorage'
+import useURL from '../hook/useURL'
 import {KEY, STATE} from '../constants'
 import { v4 as uuid } from 'uuid'
 
 
 export default function List() {
   const [list, setList] = useLocalStorage(KEY.LIST, [])
-  const [ , setState] = useLocalStorage(KEY.MAIN)
   const [ , setSelection] = useLocalStorage(KEY.SELECTION, null)
+  
+  const {setState} = useURL()
   
   
   function addItemClick() {
