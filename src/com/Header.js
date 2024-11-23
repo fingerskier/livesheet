@@ -1,5 +1,6 @@
 import {useState} from 'react'
 import useURL from '../hook/useURL'
+import {STATE} from '../constants'
 
 
 export default function Header() {
@@ -8,7 +9,9 @@ export default function Header() {
   
   return <header>
     <h1>
-      LiveSheet
+      <a href={`#${STATE.LIST}`}>
+        LiveSheet
+      </a>
       <button onClick={() => setDebug(!debug)}>?</button>
     </h1>
     
