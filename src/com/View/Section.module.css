@@ -1,0 +1,16 @@
+.chord {
+  color: #3b82f6;
+  /* superscript & italic */
+  vertical-align: super;
+  font-style: italic;
+  font-size: 1.1em;
+}
+
+.lyric {
+
+}
+
+.slug {
+  font-size: 1.5em;
+  font-weight: bold;
+}
