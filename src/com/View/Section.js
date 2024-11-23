@@ -13,9 +13,13 @@ export default function Sections({data}) {
       const chrd = data.chords.split(' ')
       
       const newLine = text.map((_, I) => {
+        const eol = _[_.length-1] === '\n' ? true : false
+        
         return <>
           <span className={style.chord}>{chrd[I] || ''}</span>
           <span className={style.lyric}>{_}</span>
+          
+          {eol && <br />}
         </>
       })
       
