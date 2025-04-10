@@ -4,10 +4,10 @@ import { useEffect, useState } from 'react'
 function useLocalStorage(key, defaultValue) {
   const [storedValue, setStoredValue] = useState(() => {
     const item = window.localStorage.getItem(key);
-
+    
     try {
       const existingValue = JSON.parse(item);
-
+      
       if (existingValue) {
         return existingValue;
       } else {
@@ -18,22 +18,24 @@ function useLocalStorage(key, defaultValue) {
       window.localStorage.setItem(key, JSON.stringify(defaultValue));
       return defaultValue;
     }
-  });
-
+  })
+  
+  
   const setValue = value => {
     try {
       const newValue = value instanceof Function ? value(storedValue) : value;
-
+      
       setStoredValue(newValue);
       window.localStorage.setItem(key, JSON.stringify(newValue));
-
+      
       // Dispatch a custom event to notify other components
       window.dispatchEvent(new CustomEvent('localStorageUpdate', { detail: { key, newValue } }));
     } catch (error) {
       console.error(error);
     }
-  };
-
+  }
+  
+  
   useEffect(() => {
     const handleStorageChange = event => {
       if (event.key === key) {
