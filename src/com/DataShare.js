@@ -31,7 +31,7 @@ export default function DataShare() {
   const handleSendMessage = () => {
     const payload = {events, people, prayers, topics}
     
-    console.log('seding', payload)
+    console.log('sending', payload)
     sendMessage(payload)
   }
   
