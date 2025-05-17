@@ -6,11 +6,10 @@ import {KEY, STATE} from '../constants'
 import style from './Edit.module.css'
 
 
-export default function Edit() {
+export default function Edit({itemId, setShowEdit}) {
   const [list, setList] = useLocalStorage(KEY.LIST, [])
-  const [ , setState] = useLocalStorage(KEY.MAIN)
-  const [selection] = useLocalStorage(KEY.SELECTION, null)
-
+  
+  const [selection, setSelection] = useState()
   const [raw, setRaw] = useState('')
   
   
@@ -32,8 +31,14 @@ export default function Edit() {
     const newList = list.map(item => item.id === id ? newItem : item)
     setList(newList)
     
-    setState(STATE.LIST)
+    setShowEdit(false)
   }
+
+
+  useEffect(() => {
+    const thisItem = list.find(item => item.id === itemId)
+    setSelection(thisItem)
+  }, [itemId])
   
   
   return <div className={style.container}>

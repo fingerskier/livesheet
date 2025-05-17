@@ -39,10 +39,12 @@ export default function List() {
   
   function Item({item}) {
     return <div>
-      {item.name}
+      <a href={`?id=${item.id}#view`}>
+        {item.name}
+      </a>
       
-      <button onClick={() => editItemClick(item.id)}> ✏️ </button>
-      <button onClick={() => viewItemClick(item.id)}> 🔍 </button>
+      {/* <button onClick={() => editItemClick(item.id)}> ✏️ </button>
+      <button onClick={() => viewItemClick(item.id)}> 🔍 </button> */}
     </div>
   }
   

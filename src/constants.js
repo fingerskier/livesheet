@@ -16,6 +16,7 @@ const STATE = {
   LIST: 'list',
   ADD: 'add',
   EDIT: 'edit',
+  VIEW: 'view',
 }
 
 
