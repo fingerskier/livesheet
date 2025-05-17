@@ -3,21 +3,18 @@ import { useEffect, useState } from 'react'
 
 function useLocalStorage(key, defaultValue) {
   const [storedValue, setStoredValue] = useState(() => {
-    const item = window.localStorage.getItem(key);
-    
-    try {
-      const existingValue = JSON.parse(item);
-      
-      if (existingValue) {
-        return existingValue;
-      } else {
-        window.localStorage.setItem(key, JSON.stringify(defaultValue));
-        return defaultValue;
+    const item = window.localStorage.getItem(key)
+
+    if (item !== null) {
+      try {
+        return JSON.parse(item)
+      } catch (error) {
+        console.error(error)
       }
-    } catch (error) {
-      window.localStorage.setItem(key, JSON.stringify(defaultValue));
-      return defaultValue;
     }
+
+    window.localStorage.setItem(key, JSON.stringify(defaultValue))
+    return defaultValue
   })
   
   
