@@ -11,8 +11,6 @@ export default function View() {
   
   
   return <div>
-    {selection.name}
-    
     {selection?.sections && <Sections data={selection.sections} /> }
 
     {selection?.raw && <div dangerouslySetInnerHTML={{__html: songToHtml(selection.raw)}} />}
