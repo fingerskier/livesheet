@@ -1,6 +1,7 @@
 import {useState} from 'react'
 import useURL from '../hook/useURL'
 import {STATE} from '../constants'
+import BackButton from './BackButton'
 
 
 export default function Header() {
@@ -9,6 +10,7 @@ export default function Header() {
   
   return <header>
     <h1>
+      <BackButton />
       <a href={`#${STATE.LIST}`}>
         LiveSheet
       </a>

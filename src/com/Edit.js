@@ -2,13 +2,16 @@ import {useEffect, useState} from 'react'
 import Sections from './Sections'
 import useLocalStorage from '../hook/useLocalStorage'
 import {KEY, STATE} from '../constants'
-import BackButton from './BackButton'
+
+import style from './Edit.module.css'
 
 
 export default function Edit() {
   const [list, setList] = useLocalStorage(KEY.LIST, [])
   const [ , setState] = useLocalStorage(KEY.MAIN)
   const [selection] = useLocalStorage(KEY.SELECTION, null)
+
+  const [raw, setRaw] = useState('')
   
   
   function handleSubmit(event) {
@@ -17,12 +20,12 @@ export default function Edit() {
     const formData = new FormData(event.target)
     const id = formData.get('id')    
     const name = formData.get('name')
-    const sections = JSON.parse(formData.get('sections'))
+    // const sections = JSON.parse(formData.get('sections'))
+    const raw = formData.get('raw')
     
-    console.log(id, name, sections)
     const newItem = {
       ...selection,
-      id, name, sections,
+      id, name, raw,
     }
     
     console.log(newItem)
@@ -33,16 +36,16 @@ export default function Edit() {
   }
   
   
-  return <div>
-    <BackButton />
-    
-    <form onSubmit={handleSubmit}>
+  return <div className={style.container}>
+    <form onSubmit={handleSubmit} className={style.form}>
       <input type="hidden" name="id" defaultValue={selection?.id} />
       
       <label htmlFor="name">Name</label>
       <input id="name" name="name" type="text" defaultValue={selection?.name} />
       
-      <Sections data={selection.sections} />
+      {/* <Sections data={selection.sections} /> */}
+
+      <textarea name="raw" defaultValue={selection?.raw} />
       
       <button type="submit">Save</button>
     </form>
