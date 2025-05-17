@@ -1,191 +1,102 @@
-// songToHtml.js – ESM module to convert custom chord-lyric text files into styled HTML
-// Author: ChatGPT 2025-05-16 (rev-4)
+// songToHtml.js – ESM module to convert custom chord‑lyric text files into styled HTML
+// Author: ChatGPT 2025‑05‑16 (rev‑11)
 //
-// Δ 2025-05-16-d  (minor chords on 2, 3, 6)
+// Δ 2025‑05‑16‑k  (Bass notes omit quality/minor suffix)
 // ─────────────────────────────────────────────────────────────────────────────
-// • Numeric scale-degree chords 2, 3, 6 are now rendered as minor ("m") relative
-//   to the detected key, e.g. in C major → Dm, Em, Am.
-// • formatToken() updated accordingly; chord-only lines pick up the change.
-// • No other behaviour altered.
-//
-// Usage unchanged.
+// • In slash‑chords (`root/bass`) the **bass part is now rendered as a raw note
+//   name only** – never “m”.
+//      `1/5` in key C → `C/G`   (5 maps to G, no minor)
+//      `Em/G` stays `Em/G`      (letter bass stripped to “G”)
+//      `4m/2` in C → `Fm/D`     (root keeps quality; bass is plain D)
+// • Added `noteOnly()` helper used exclusively for bass mapping.
+// • All other behaviour from rev‑10 (position superscripts, lyric spans, etc.)
+//   preserved.
 
 export default function songToHtml(rawText) {
-  // ───────── 1. Normalise EOL & split
+  /*──────────── TITLE & KEY ──────────────────*/
   const lines = rawText.replace(/\r\n?/g, "\n").split("\n");
-  const firstContentIdx = lines.findIndex(l => l.trim());
-  if (firstContentIdx === -1) return ""; // empty file
+  const first = lines.findIndex(l => l.trim());
+  if (first === -1) return "";
 
-  const titleLine = lines[firstContentIdx];
-  const keyMatch  = titleLine.match(/\[\s*([A-G][#b]?)\s*]/i);
-  const songKey   = keyMatch ? keyMatch[1].toUpperCase() : "C";
-  const majorScale = buildMajorScale(songKey);
+  const title = lines[first];
+  const key   = (title.match(/\[\s*([A-G][#b]?)\s*]/i) || [,"C"])[1].toUpperCase();
+  const scale = buildMajorScale(key);
 
-  // ───────── 2. Parse progression declarations & sections
-  const progressionMap = Object.create(null);
-  const sections = [];
-  let   currentSection = null;
-  const definedSectionNames = new Set();
+  /*──────────── UTILITY HELPERS ────────────────*/
+  const esc  = s=>s.replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+  const span = t=>`<span class="lyric-segment">${esc(t)}</span>`;
+  const sup  = t=>`<sup class="chord">${t}</sup>`;
+  const slug = s=>s.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/(^-|-$)/g,"");
+  const ciEq = (a,b)=>a.toLowerCase()===b.toLowerCase();
+  const DIG_SUP={0:"⁰",1:"¹",2:"²",3:"³",4:"⁴",5:"⁵",6:"⁶",7:"⁷",8:"⁸",9:"⁹"};
+  const supDigits=s=>s.split("").map(d=>DIG_SUP[d]||d).join("");
 
-  for (let i = firstContentIdx + 1; i < lines.length; ++i) {
-    const raw = lines[i];
-    const trimmed = raw.replace(/\s+$/, "").trim();
-    if (!trimmed) continue;
+  /* Degree → chord (with minor on ii/iii/vi) */
+  const degChord=d=>{const n=scale[(d+6)%7];return[2,3,6].includes(d)?`${n}m`:n;};
+  /* Degree or letter → plain note (no quality) */
+  const noteOnly=p=>{
+    if(!p) return "";
+    if(/^[1-7]$/.test(p)) return scale[(+p+6)%7];
+    const m=p.match(/^([A-G][#b]?)/i);return m?m[1]:p;
+  };
 
-    const isIndented = /^\s/.test(raw);
-    const colonIdx = trimmed.indexOf(":");
-    const hasColon = colonIdx !== -1;
-    const isHeaderWithColon = hasColon && colonIdx === trimmed.length - 1;
+  const numOrLetterChord=p=>/^[1-7]$/.test(p)?degChord(+p):p;
 
-    // Progression declaration
-    if (hasColon && !isHeaderWithColon) {
-      const label = trimmed.slice(0, colonIdx).trim();
-      const rest = trimmed.slice(colonIdx + 1).trim();
-      progressionMap[label.toLowerCase()] = parseProgression(rest);
+  /*──────────── TOKEN FORMATTER ────────────────*/
+  function formatToken(raw){
+    if(!raw)return"";
+    let tok=String(raw).trim();
+
+    // |position → superscript
+    let pos="";const pipe=tok.indexOf("|");
+    if(pipe!==-1){pos=supDigits(tok.slice(pipe+1));tok=tok.slice(0,pipe);}  
+
+    const [rootRaw,bassRaw]=tok.split("/");
+
+    const rm=rootRaw.match(/^([1-7]|[A-G][#b]?)(.*)$/i);
+    let root=rootRaw;
+    if(rm){const[,base,qual]=rm;root=numOrLetterChord(base)+qual;}
+
+    let out=root;
+    if(bassRaw!==undefined){out+=`/${noteOnly(bassRaw)}`;}
+
+    return out+pos;
+  }
+
+  const fmtLine=arr=>arr.map(formatToken).map(sup).join(" ");
+
+  /*──────────── PARSE STRUCTURE ────────────────*/
+  const prog=Object.create(null);const sections=[];let cur=null;const seen=new Set();
+  for(let i=first+1;i<lines.length;i++){
+    const raw=lines[i];const r=raw.replace(/\s+$/,"");const t=r.trim();if(!t)continue;
+    const ind=/^\s/.test(raw);const cp=t.indexOf(":");const hdr=cp!==-1&&cp===t.length-1;
+    if(cp!==-1&&!hdr){prog[t.slice(0,cp).trim().toLowerCase()]=parseProg(t.slice(cp+1));continue;}
+    if(!ind&&(hdr||cp===-1)){
+      const name=hdr?t.slice(0,-1).trim():t;
+      if(cp===-1&&seen.has(name.toLowerCase())){sections.push({ref:name});cur=null;}
+      else{cur={name,lines:[]};sections.push(cur);seen.add(name.toLowerCase());}
       continue;
     }
-
-    // Section header with colon
-    if (!isIndented && isHeaderWithColon) {
-      openSection(trimmed.slice(0, -1).trim());
-      continue;
-    }
-
-    // Section header without colon
-    if (!isIndented && !hasColon) {
-      if (definedSectionNames.has(trimmed.toLowerCase())) {
-        sections.push({ ref: trimmed });
-        currentSection = null;
-      } else {
-        openSection(trimmed);
-      }
-      continue;
-    }
-
-    // Lyric line inside section
-    if (isIndented && currentSection) currentSection.lines.push(trimmed);
+    if(ind&&cur)cur.lines.push(r.trimStart());
   }
 
-  // ───────── 3. Render HTML
-  const htmlParts = [
-    `<article class="song">`,
-    `  <h2 class="song-title">${escapeHtml(titleLine)}</h2>`
-  ];
+  /*──────────── RENDER ────────────────*/
+  const out=[`<article class="song">`,`  <h2 class="song-title">${esc(title)}</h2>`];
+  for(const s of sections){
+    if(s.ref){const src=sections.find(x=>x.name&&ciEq(x.name,s.ref));if(src?.html)out.push(src.html);continue;}
+    const toks=resolve(s.name,prog);let idx=0;
+    const body=s.lines.length? s.lines.map(l=>lyric(l)).join("\n") : `    <p class="chord-line">${fmtLine(toks)}</p>`;
+    s.html=[`<section class="song-section section-${slug(s.name)}">`,`  <h3 class="section-title">${esc(s.name)}</h3>`,body,`</section>`].join("\n");
+    out.push(s.html);
 
-  for (const section of sections) {
-    if (section.ref) {
-      const src = sections.find(s => s.name && eqCi(s.name, section.ref));
-      if (src?.html) htmlParts.push(src.html);
-      continue;
-    }
-
-    const chords = resolveProgression(section.name, progressionMap);
-    let chordIdx = 0;
-
-    let linesHtml;
-    if (section.lines.length === 0) {
-      linesHtml = `    <p class="chord-line">${formatChordLine(chords)}</p>`;
-    } else {
-      linesHtml = section.lines.map(lyric =>
-        `    <p class="lyric-line">${lyric.replace(/\^/g, () => {
-          const token = chords[chordIdx % chords.length] || "";
-          chordIdx += 1;
-          return `<sup class="chord">${formatToken(token)}</sup>`;
-        })}</p>`
-      ).join("\n");
-    }
-
-    const slug = slugify(section.name);
-    section.html = [
-      `<section class="song-section section-${slug}">`,
-      `  <h3 class="section-title">${escapeHtml(section.name)}</h3>`,
-      linesHtml,
-      `</section>`
-    ].join("\n");
-
-    htmlParts.push(section.html);
+    function lyric(line){
+      const parts=[];let p=0;while(true){const c=line.indexOf("^",p);if(c===-1){parts.push(span(line.slice(p)));break;}parts.push(span(line.slice(p,c)));parts.push(sup(formatToken(toks[idx++%toks.length])));p=c+1;}return`    <p class="lyric-line">${parts.join("")}</p>`;}
   }
+  out.push("</article>");return out.join("\n");
 
-  htmlParts.push("</article>");
-  return htmlParts.join("\n");
-
-  // ───── helpers scoped ─────────────────────────────────────────────
-  function openSection(name) {
-    currentSection = { name, lines: [] };
-    sections.push(currentSection);
-    definedSectionNames.add(name.toLowerCase());
-  }
-
-  function formatToken(tok) {
-    if (/^[A-G]/i.test(tok)) return tok; // explicit chord name
-
-    if (/^[1-7]$/.test(tok)) {
-      const degree = +tok;                           // 1–7
-      const letter = majorScale[(degree + 6) % 7];   // map to scale index
-      return [2,3,6].includes(degree) ? `${letter}m` : letter;
-    }
-    return tok; // fallback (e.g. N.C.)
-  }
-
-  function formatChordLine(arr) {
-    return arr.map(formatToken).map(c => `<sup class="chord">${c}</sup>`).join(" ");
-  }
-
-  function eqCi(a, b) { return a.toLowerCase() === b.toLowerCase(); }
+  /*───────── internal helpers ───────*/
+  function parseProg(s){const tk=s.trim().split(/\s+/).map(v=>v.trim());const o=[];for(let i=0;i<tk.length;i++){if(tk[i].startsWith("(")){let g=[];let w=tk[i].slice(1);while(!w.endsWith(")")){g.push(w);w=tk[++i];}g.push(w.slice(0,-1));let n=1;if(/^x\d+$/i.test(tk[i+1])){n=parseInt(tk[++i].slice(1),10);}while(n--)o.push(...g);}else o.push(tk[i]);}return o;}
+  function resolve(n,m){if(!n)return[];const l=n.toLowerCase();const r=l.split(/\s+/)[0];return m[l]||m[r]||m[`${r}s`]||[];}
 }
 
-// ═════════════════════════════════ utilities ══════════════════════════
-function parseProgression(str) {
-  const tokens = str.trim().split(/\s+/);
-  const out = [];
-  let i = 0;
-  while (i < tokens.length) {
-    if (tokens[i].startsWith("(")) {
-      let group = [];
-      let tok = tokens[i].replace(/^\(/, "");
-      while (!tok.endsWith(")")) {
-        group.push(tok);
-        tok = tokens[++i];
-      }
-      group.push(tok.replace(/\)$/ ,""));
-      let times = 1;
-      const nxt = tokens[i + 1];
-      if (/^x\d+$/i.test(nxt)) { times = parseInt(nxt.slice(1), 10); i++; }
-      for (let t = 0; t < times; ++t) out.push(...group);
-    } else {
-      out.push(tokens[i]);
-    }
-    i++;
-  }
-  return out;
-}
-
-function resolveProgression(sectionName, map) {
-  if (!sectionName) return [];
-  const lower = sectionName.toLowerCase();
-  const first = lower.split(/\s+/)[0];
-  for (const k of [lower, first, `${first}s`]) if (map[k]) return map[k];
-  return [];
-}
-
-function escapeHtml(str) {
-  return str.replace(/[&<>"']/g, c => ({
-    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
-  }[c]));
-}
-
-function slugify(str) {
-  return str.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
-}
-
-function buildMajorScale(tonic) {
-  const sharp = ["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"];
-  const flat  = ["C","Db","D","Eb","E","F","Gb","G","Ab","A","Bb","B"];
-  const sharpKeys = ["C","G","D","A","E","B","F#","C#"];
-  const useSharps = tonic.includes("#") || sharpKeys.includes(tonic);
-  const names = useSharps ? sharp : flat;
-  const idxMap = {C:0,"C#":1,Db:1,D:2,"D#":3,Eb:3,E:4,Fb:4,F:5,"F#":6,Gb:6,G:7,"G#":8,Ab:8,A:9,"A#":10,Bb:10,B:11,Cb:11};
-  const tonicIdx = idxMap[tonic];
-  const intervals = [0,2,4,5,7,9,11];
-  return intervals.map(i => names[(tonicIdx + i) % 12]);
-}
+function buildMajorScale(t){const sh=["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"],fl=["C","Db","D","Eb","E","F","Gb","G","Ab","A","Bb","B"],shK=["C","G","D","A","E","B","F#","C#"];const names=t.includes("#")||shK.includes(t)?sh:fl;const idx={C:0,"C#":1,Db:1,D:2,"D#":3,Eb:3,E:4,F:5,"F#":6,Gb:6,G:7,"G#":8,Ab:8,A:9,"A#":10,Bb:10,B:11}[t];return[0,2,4,5,7,9,11].map(s=>names[(idx+s)%12]);}
