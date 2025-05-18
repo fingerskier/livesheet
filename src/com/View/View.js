@@ -25,7 +25,7 @@ export default function View() {
   
   return <div className={style.container}>
     <div className={style.controls}>
-      <button onClick={() => setShowEdit(!showEdit)}> ✏️ </button>
+      <button onClick={() => setShowEdit(!showEdit)}>✏️</button>
       <button onClick={E=>{}}> 🔍 </button>
     </div>
 
