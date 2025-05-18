@@ -14,6 +14,9 @@ export default function View() {
   const [showEdit, setShowEdit] = useState(false)
   
   const [data, setData] = useState(null)
+  const [html, setHtml] = useState(null)
+  const [arrangement, setArrangement] = useState(null)
+  const [arrangOpts, setArrangOpts] = useState(null)
 
 
   useEffect(() => {
@@ -21,6 +24,23 @@ export default function View() {
     const thisItem = list.find(item => item.id === query.id)
     setData(thisItem)
   }, [query.id, showEdit])
+
+
+  useEffect(()=>{
+    console.debug('data',data)
+    if (data?.raw) {
+      const {html, arrangements} = songToHtml(data.raw)
+      setArrangOpts(arrangements)
+    }
+  },[data])
+
+  useEffect(()=>{
+    if (arrangement) {
+      const {html} = songToHtml(data.raw, arrangement)
+      console.debug('html',html)
+      setHtml(html)
+    }
+  }, [arrangement])
 
   
   return <div className={style.container}>
@@ -37,7 +57,18 @@ export default function View() {
       <div>
         {data?.sections && <Sections data={data.sections} itemId={query.id} /> }
 
-        {data?.raw && <div dangerouslySetInnerHTML={{__html: songToHtml(data.raw)}} />}
+        {data && arrangOpts && <>
+          <select onChange={e=>setArrangement(e.target.value)}>
+            <option value=''>Select Arrangement</option>
+            {arrangOpts?.map((arrangement, index) => (
+              <option key={index} value={arrangement}>{arrangement}</option>
+            ))}
+          </select>
+        </>}
+
+        {html && arrangement && <>
+          <div dangerouslySetInnerHTML={{__html: html}} />
+        </>}
       </div>
     </div>
   </div>
