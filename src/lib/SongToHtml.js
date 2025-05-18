@@ -1,16 +1,17 @@
 // SongToHtml.js – ESM module to convert chord‑lyric source into HTML with section arrangements.
-// Author: ChatGPT 2025‑05‑18 (rev‑21)
+// Author: ChatGPT 2025‑05‑18 (rev‑25)
 //
-// rev‑21 (bug‑fix)
-//   • Fixed typo in expandChordProgression(): `.endswith()` → `.endsWith()`.
-//     This caused a TypeError in browsers without the lowercase alias.
-//   • No behavioural changes beyond the error fix.
+// rev‑25 (fret glyph update) – **Braille‑dot fret symbols**
+//   • Replaces the playing‑card glyphs with the user‑specified Braille dot
+//     characters:
+//       1→⠂, 2→⠅, 3→⠇, 4→⠏, 5→⠗, 6→⠛, 7→⠞, 8→⠟, 9→⠥,
+//       10→⠦, 11→⠧, 12→⠨, 13→⠩.
+//   • Pipe (|) still removed in rendered output.
 //
 // ----------------------------------------------------------------------
-// Usage:
-//   import songToHtml from "./SongToHtml.js";
-//   const { html, arrangements } = songToHtml(srcText, "Studio");
-//   document.body.innerHTML = html;
+// Usage example:
+//   "C|3"     → "C⠇"   (third‑fret)
+//   "Bb+|10"  → "Bb+⠦" (tenth‑fret)
 // ----------------------------------------------------------------------
 
 export default function songToHtml (source, arrangementName = "") {
@@ -21,14 +22,54 @@ export default function songToHtml (source, arrangementName = "") {
   const titleLine = lines[idx].trim();
   idx++;
 
+  // -------------------------------------------------------------------------
+  // Internal fret‑glyph helper & mapping
+  // -------------------------------------------------------------------------
+  const FRET_GLYPHS = [
+    "",        // 0
+    "⠂",      // 1
+    "⠅",      // 2
+    "⠇",      // 3
+    "⠏",      // 4
+    "⠗",      // 5
+    "⠛",      // 6
+    "⠞",      // 7
+    "⠟",      // 8
+    "⠥",      // 9
+    "⠦",      // 10
+    "⠧",      // 11
+    "⠨",      // 12
+    "⠩"       // 13
+  ];
+  const displayChord = ch => ch.replace(/\|(\d{1,2})$/, (_m, num) => {
+    const n = parseInt(num, 10);
+    return (n >= 1 && n < FRET_GLYPHS.length) ? FRET_GLYPHS[n] : num;
+  });
+
   // 2. Chord definitions -----------------------------------------------------
-  const chordDefs = {};
+  const chordDefs = {};          // flattened array per section‑type
+  const chordDisplay = {};       // array<string> preserving line breaks
+
   while (idx < lines.length && !/^\s*Sections:/i.test(lines[idx])) {
-    const m = lines[idx].match(/^\s*([A-Za-z0-9_\- ]+):\s*(.+)$/);
-    if (m) {
-      const name = m[1].trim().toLowerCase();
-      const progression = expandChordProgression(m[2].trim());
-      chordDefs[name] = progression;
+    const defMatch = lines[idx].match(/^\s*([A-Za-z0-9_\- ]+):\s*(.+)$/);
+    if (defMatch) {
+      const typeKey = defMatch[1].trim().toLowerCase();
+      const displayLines = [defMatch[2].trim()];
+
+      // collect continuation lines (indented, no colon)
+      let look = idx + 1;
+      while (
+        look < lines.length &&
+        /^\s{2,}\S/.test(lines[look]) &&          // indented
+        !/^[A-Za-z0-9_\- ]+:\s*/.test(lines[look].trim()) // not "foo:"
+      ) {
+        displayLines.push(lines[look].trim());
+        look++;
+      }
+
+      idx = look - 1; // loop will ++
+      chordDisplay[typeKey] = displayLines;
+      chordDefs[typeKey] = expandChordProgression(displayLines.join(" "));
     }
     idx++;
   }
@@ -41,7 +82,11 @@ export default function songToHtml (source, arrangementName = "") {
       const sectionName = sectionHeader[1].trim();
       idx++;
       const lyricLines = [];
-      while (idx < lines.length && !/^\s{2,}[A-Za-z0-9_\- ]+:\s*$/.test(lines[idx]) && !/^\s*Arrangements:/i.test(lines[idx])) {
+      while (
+        idx < lines.length &&
+        !/^\s{2,}[A-Za-z0-9_\- ]+:\s*$/.test(lines[idx]) &&
+        !/^\s*Arrangements:/i.test(lines[idx])
+      ) {
         const ln = lines[idx];
         if (ln.trim().length) lyricLines.push(ln.replace(/^\s{4}/, ""));
         idx++;
@@ -62,7 +107,10 @@ export default function songToHtml (source, arrangementName = "") {
         const arrName = arrHeader[1].trim();
         idx++;
         const arrSections = [];
-        while (idx < lines.length && !/^\s{2,}[A-Za-z0-9_\- ]+:\s*$/.test(lines[idx])) {
+        while (
+          idx < lines.length &&
+          !/^\s{2,}[A-Za-z0-9_\- ]+:\s*$/.test(lines[idx])
+        ) {
           const secLine = lines[idx].trim();
           if (secLine.length) arrSections.push(secLine);
           idx++;
@@ -86,9 +134,19 @@ export default function songToHtml (source, arrangementName = "") {
   htmlParts.push(`<section class="song-chords"><h3 class="chords-title">Chords</h3>`);
   chosenArrangement.forEach(secName => {
     const typeKey = extractSectionType(secName);
-    const chordsForType = chordDefs[typeKey] || [];
-    const chordSpans = chordsForType.map(ch => `<span class="chord">${escapeHtml(ch)}</span>`).join(" ");
-    htmlParts.push(`<p class="chord-line"><span class="chord-section-label">${escapeHtml(secName)}</span> ${chordSpans}</p>`);
+    const displayLines = chordDisplay[typeKey] || [];
+
+    if (!displayLines.length) return; // skip if none
+
+    // Build line with breaks
+    let lineHtml = `<span class="chord-section-label">${escapeHtml(secName)}</span> ` +
+      lineToChordSpans(displayLines[0]);
+
+    for (let i = 1; i < displayLines.length; i++) {
+      lineHtml += `<br class="line-break"/>` + lineToChordSpans(displayLines[i]);
+    }
+
+    htmlParts.push(`<p class="chord-line">${lineHtml}</p>`);
   });
   htmlParts.push(`</section>`);
 
@@ -107,14 +165,14 @@ export default function songToHtml (source, arrangementName = "") {
         const processed = processLyricLine(rawLine, chords, () => {
           const c = chords[chordIdx % chords.length] || "";
           chordIdx++;
-          return `<sup class="chord">${escapeHtml(c)}</sup>`;
+          return `<sup class="chord">${escapeHtml(displayChord(c))}</sup>`;
         });
         htmlParts.push(`<p class="lyric-line">${processed}</p>`);
       });
     } else {
       // chord‑only instrumental
       const chords = chordDefs[extractSectionType(secName)] || [];
-      const chordSpans = chords.map(ch => `<span class="chord">${escapeHtml(ch)}</span>`).join(" ");
+      const chordSpans = chords.map(ch => `<span class="chord">${escapeHtml(displayChord(ch))}</span>`).join(" ");
       htmlParts.push(`<p class="chord-line">${chordSpans}</p>`);
     }
 
@@ -124,15 +182,20 @@ export default function songToHtml (source, arrangementName = "") {
   htmlParts.push(`</article>`);
 
   return { html: htmlParts.join("\n"), arrangements: arrangementNames };
+
+  // helper to turn a single progression‑line string into spans
+  function lineToChordSpans (str) {
+    return str.split(/\s+/).filter(Boolean).map(ch => `<span class="chord">${escapeHtml(displayChord(ch))}</span>`).join(" ");
+  }
 }
 
 // ---------------------------------------------------------------------------
-// Helper utilities
+// Helper utilities (outside default export)
 // ---------------------------------------------------------------------------
 
 function escapeHtml (str) {
   const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
-  return String(str).replace(/[&<>"']/g, ch => map[ch] || ch);
+  return String(str).replace(/[&<>"]|'"'/g, ch => map[ch] || ch);
 }
 
 function extractSectionType (secName) {
@@ -159,7 +222,7 @@ function expandChordProgression (expr) {
   for (let i = 0; i < tokens.length; i++) {
     let tok = tokens[i];
     if (tok.startsWith('(')) {
-      // Collect group until we hit a token ending with ')'
+      // Collect group until token ending with ')'
       let group = [];
       if (tok.endsWith(')')) {
         group.push(tok.slice(1, -1));
@@ -179,8 +242,7 @@ function expandChordProgression (expr) {
       }
       for (let r = 0; r < repeat; r++) chords.push(...group);
     } else if (/^x\d+$/i.test(tok)) {
-      // Stray repeat token – ignore
-      continue;
+      continue; // stray repeat token
     } else {
       chords.push(tok);
     }
