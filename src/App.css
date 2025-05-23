@@ -98,3 +98,11 @@ a {
 .song-section {
   margin-top: 1rem;
 }
+
+.chord-line {
+  padding-left: 4rem;
+}
+
+br.line-break + * {
+  padding-left: 4rem;
+}

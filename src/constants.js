@@ -1,8 +1,11 @@
 const KEY = {
   ADD: 'ADD',
   APP: 'APP',
+  CHORDSET: 'CHORDSET',
+  CHORDS: 'CHORDS',
   EDIT: 'EDIT',
   LIST: 'LIST',
+  LYRICS: 'LYRICS',
   MAIN: 'MAIN',
   PROGRAM: 'PROGRAM',
   QUERY: 'QUERY',

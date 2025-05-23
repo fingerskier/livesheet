@@ -4,6 +4,7 @@ import useLocalStorage from '../../hook/useLocalStorage'
 import {KEY, STATE} from '../../constants'
 import Sections from './Sections'
 import songToHtml from '../../lib/SongToHtml'
+import Icon from 'unicode-icons'
 
 import style from './View.module.css'
 
@@ -11,12 +12,15 @@ export default function View() {
   const [list] = useLocalStorage(KEY.LIST, [])
   const [state] = useLocalStorage(KEY.VIEW)
   const [query] = useLocalStorage(KEY.QUERY)
-  const [showEdit, setShowEdit] = useState(false)
+  const [showChordset, setShowChordset] = useLocalStorage(KEY.CHORDSET, false)
+  const [showChords, setShowChords] = useLocalStorage(KEY.CHORDS, false)
+  const [showLyrics, setShowLyrics] = useLocalStorage(KEY.LYRICS, false)
   
-  const [data, setData] = useState(null)
-  const [html, setHtml] = useState(null)
   const [arrangement, setArrangement] = useState(null)
   const [arrangOpts, setArrangOpts] = useState(null)
+  const [data, setData] = useState(null)
+  const [html, setHtml] = useState(null)
+  const [showEdit, setShowEdit] = useState(false)
 
 
   useEffect(() => {
@@ -42,16 +46,48 @@ export default function View() {
     }
   }, [arrangement])
 
+  useEffect(()=>{
+    if (showChordset) {
+      document.querySelectorAll('.song-chords').forEach(chord => {
+        chord.style.display = 'block'
+      })
+    } else {
+      document.querySelectorAll('.song-chords').forEach(chord => {
+        chord.style.display = 'none'
+      })
+    }
+  }, [showChordset])
+
+  useEffect(()=>{
+    if (showChords) {
+      document.querySelectorAll('.chord').forEach(chord => {
+        chord.style.display = 'inline'
+      })
+    } else {
+      document.querySelectorAll('.chord').forEach(chord => {
+        chord.style.display = 'none'
+      })
+    }
+
+  }, [showChords])
+
   
   return <div className={style.container}>
     <div className={style.controls}>
-      <button onClick={() => setShowEdit(!showEdit)}>✏️</button>
-      <button onClick={E=>{}}> 🔍 </button>
+      <button onClick={() => setShowEdit(!showEdit)}>
+        {Icon.PENCIL}
+      </button>
+      <button onClick={() => setShowChordset(!showChordset)}>
+        {showChordset ? Icon.EYE : Icon.EYE_CLOSED}
+      </button>
+      <button onClick={() => setShowChords(!showChords)}>chords</button>
+      <button onClick={() => setShowLyrics(!showLyrics)}>lyrics</button>
+      <button onClick={() => setShowChordset(!showChordset)}>chordset</button>
     </div>
 
     <div className={style.content}>
       <div>
-        {showEdit && <Edit itemId={query.id} setShowEdit={setShowEdit} />}
+        {showEdit && <Edit className={style.editor} itemId={query.id} setShowEdit={setShowEdit} />}
       </div>
     
       <div>

@@ -6,7 +6,7 @@ import {KEY, STATE} from '../constants'
 import style from './Edit.module.css'
 
 
-export default function Edit({itemId, setShowEdit}) {
+export default function Edit({className, itemId, setShowEdit}) {
   const [list, setList] = useLocalStorage(KEY.LIST, [])
   
   const [selection, setSelection] = useState()
@@ -27,7 +27,6 @@ export default function Edit({itemId, setShowEdit}) {
       id, name, raw,
     }
     
-    console.log(newItem)
     const newList = list.map(item => item.id === id ? newItem : item)
     setList(newList)
     
@@ -41,18 +40,20 @@ export default function Edit({itemId, setShowEdit}) {
   }, [itemId])
   
   
-  return <div className={style.container}>
-    <form onSubmit={handleSubmit} className={style.form}>
-      <input type="hidden" name="id" defaultValue={selection?.id} />
-      
-      <label htmlFor="name">Name</label>
-      <input id="name" name="name" type="text" defaultValue={selection?.name} />
-      
-      {/* <Sections data={selection.sections} /> */}
+  return <div className={`${className}`}>
+    <div className={`${style.container}`}>
+      <form onSubmit={handleSubmit} className={style.form}>
+        <input type="hidden" name="id" defaultValue={selection?.id} />
+        
+        <label htmlFor="name">Name</label>
+        <input id="name" name="name" type="text" defaultValue={selection?.name} />
+        
+        {/* <Sections data={selection.sections} /> */}
 
-      <textarea name="raw" defaultValue={selection?.raw} />
-      
-      <button type="submit">Save</button>
-    </form>
+        <textarea name="raw" defaultValue={selection?.raw} />
+        
+        <button type="submit">Save</button>
+      </form>
+    </div>
   </div>
 }

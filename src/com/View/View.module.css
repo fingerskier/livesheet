@@ -15,3 +15,13 @@
   flex-direction: row;
   justify-content: space-between;
 }
+
+.editor {
+  flex-grow: 1;
+  min-width: 33vw;
+}
+
+.editor textarea {
+  width: 100%;
+  min-height: 13rem
+}
