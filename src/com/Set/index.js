@@ -15,8 +15,9 @@ export default function Set() {
   const add = ()=>{
     const name = window.prompt('Enter the name of the set')
     if(name){
+      const dt = window.prompt('Enter the date/time for this set (YYYY-MM-DDThh:mm)', new Date().toISOString().slice(0,16))
       const newId = uuid()
-      setSets([...sets, {id:newId, name, songs:[]}])
+      setSets([...sets, {id:newId, name, datetime: dt || '', songs:[]}])
     }
   }
 
