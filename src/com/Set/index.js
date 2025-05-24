@@ -7,7 +7,7 @@ import Icon from 'unicode-icons'
 
 
 export default function Set() {
-  const [sets, setSets] = useLocalStorage(KEY.SET, [])
+  const [sets, setSets] = useLocalStorage(KEY.SETS, [])
   
   const [selectedSetId, setSelectedSetId] = useState(null)
   
@@ -39,9 +39,9 @@ export default function Set() {
     <button onClick={add}>Add Set</button>
     <select onChange={e=>setSelectedSetId(e.target.value)} value={selectedSetId}>
       <option value=''>Select a set</option>
-      {sets.map((set, index) => (
+      {(Array.isArray(sets) && sets.map((set, index) => (
         <option key={index} value={set.id}>{set.name}</option>
-      ))}
+      )))}
     </select>
     
     {/* remove the selected set */}

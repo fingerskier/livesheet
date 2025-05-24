@@ -10,6 +10,8 @@ const KEY = {
   PROGRAM: 'PROGRAM',
   QUERY: 'QUERY',
   SELECTION: 'SELECTION',
+  SET: 'SET',
+  SETS: 'SETS',
   SONG: 'SONG',
   SONGS: 'SONGS',
   VIEW: 'VIEW',
