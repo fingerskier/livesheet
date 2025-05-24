@@ -14,7 +14,6 @@ export default function View() {
   const [query] = useLocalStorage(KEY.QUERY)
   const [showChordset, setShowChordset] = useLocalStorage(KEY.CHORDSET, false)
   const [showChords, setShowChords] = useLocalStorage(KEY.CHORDS, false)
-  const [showLyrics, setShowLyrics] = useLocalStorage(KEY.LYRICS, false)
   
   const [arrangement, setArrangement] = useState(null)
   const [arrangOpts, setArrangOpts] = useState(null)
@@ -39,9 +38,7 @@ export default function View() {
   useEffect(()=>{
     if (arrangement) {
       const {html} = songToHtml(data.raw, arrangement)
-      console.log('HTML', html)
       setHtml(html)
-      setShowLyrics(true)
       setShowChords(true)
       setShowChordset(false)
     }
@@ -78,12 +75,12 @@ export default function View() {
       <button onClick={() => setShowEdit(!showEdit)}>
         {Icon.PENCIL}
       </button>
-      <button onClick={() => setShowChordset(!showChordset)}>
-        {showChordset ? Icon.EYE : Icon.EYE_CLOSED}
+      <button onClick={() => setShowChords(!showChords)}>
+        chords {showChords ? Icon.EYE : ''}
       </button>
-      <button onClick={() => setShowChords(!showChords)}>chords</button>
-      <button onClick={() => setShowLyrics(!showLyrics)}>lyrics</button>
-      <button onClick={() => setShowChordset(!showChordset)}>chordset</button>
+      <button onClick={() => setShowChordset(!showChordset)}>
+        chordset {showChordset ? Icon.EYE : ''}
+      </button>
     </div>
 
     <div className={style.content}>
