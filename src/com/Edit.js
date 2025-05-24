@@ -1,6 +1,7 @@
 import {useEffect, useState} from 'react'
 import Sections from './Sections'
 import useLocalStorage from '../hook/useLocalStorage'
+import useURL from '../hook/useURL'
 import {KEY, STATE} from '../constants'
 
 import style from './Edit.module.css'
@@ -8,6 +9,7 @@ import style from './Edit.module.css'
 
 export default function Edit({className, itemId, setShowEdit}) {
   const [list, setList] = useLocalStorage(KEY.LIST, [])
+  const {setState} = useURL()
   
   const [selection, setSelection] = useState()
   const [raw, setRaw] = useState('')
@@ -29,8 +31,12 @@ export default function Edit({className, itemId, setShowEdit}) {
     
     const newList = list.map(item => item.id === id ? newItem : item)
     setList(newList)
-    
-    if (typeof setShowEdit === 'function') setShowEdit(false)
+
+    if (typeof setShowEdit === 'function') {
+      setShowEdit(false)
+    } else {
+      setState(STATE.LIST)
+    }
   }
 
 
