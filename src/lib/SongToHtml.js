@@ -1,32 +1,71 @@
-// SongToHtml.js – convert chord‑lyric source to HTML + arrangements
-// Author: ChatGPT 2025‑05‑23 (rev‑33)
+// SongToHtml.js – convert chord‑lyric source (numeric or named) to HTML + arrangements
+// Author: ChatGPT 2025‑05‑24 (rev‑34)
 //
-// rev‑33 (lyric capture + section‑header regex fix)
-//   • Lyric lines were being skipped because the regex that detects the start
-//     of the *next* section was too broad (it matched any indented text).
-//     Now section headers **must** end with a colon.
-//       ‑ Section header → 2+ leading spaces & ends with ':'
-//       ‑ Lyric line      → anything else (so we capture them correctly).
-//   • Chord summary still shows original progression strings; lyrics now render
-//     with superscript chords.
+// rev‑34 (Nashville‑number ↔ key translation)
+//   • Reads a key in brackets on the title line, e.g. `Amazing Grace [D]`.
+//   • Numeric chords 1‑7 (including bass‑notes such as `1/4`) are translated
+//     to diatonic chords in that key. Quality follows the major scale pattern:
+//       1 maj, 2 min, 3 min, 4 maj, 5 maj, 6 min, 7° (diminished).
+//   • Non‑numeric chords and accidentals remain untouched. Fret‑glyph support
+//     and all earlier fixes retained.
 // ---------------------------------------------------------------------------
 
 export default function songToHtml (source, arrangementName = "") {
   const lines = source.replace(/\r\n?/g, "\n").split("\n");
   let idx = 0;
 
-  // 1. Title ----------------------------------------------------------------
+  // 1. Title & key -----------------------------------------------------------
   const titleLine = lines[idx]?.trim() ?? "";
+  const keyMatch = titleLine.match(/\[(\w[♯#♭b]?)]/);
+  const songKey = keyMatch ? normalizeKey(keyMatch[1]) : null; // e.g. "C", "F#"
   idx++;
 
-  // 2. Fret glyphs -----------------------------------------------------------
-  const FRET = ["", "⠂", "⠅", "⠇", "⠏", "⠗", "⠛", "⠞", "⠟", "⠥", "⠦", "⠧", "⠨", "⠩"];
-  const fmtChord = c => c.replace(/\|(\d{1,2})$/, (_, n) => (FRET[n] || n));
+  // 2. Helpers for number→chord --------------------------------------------
+  const chromatic = ["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"];
+  // prefer flats for flat keys
+  const flats    = {"C#":"Db","D#":"Eb","F#":"Gb","G#":"Ab","A#":"Bb"};
+  const majorIntervals = [0,2,4,5,7,9,11];
+  const qualities = ["","m","m","","","m","dim"];
+  function normalizeKey(k){return k.replace(/♯/g,"#").replace(/♭/g,"b");}
+  function semitone(note){
+    const up = note.toUpperCase();
+    let idx = chromatic.indexOf(up);
+    if(idx>-1) return idx;
+    // flats
+    const alt = {"DB":"C#","EB":"D#","GB":"F#","AB":"G#","BB":"A#"}[up];
+    return alt? chromatic.indexOf(alt):0;
+  }
+  function degreeToChord(num){
+    if(!songKey) return String(num); // no key ⇒ leave numeric
+    const deg = (num-1)%7;
+    const rootSemi = (semitone(songKey)+majorIntervals[deg])%12;
+    let root = chromatic[rootSemi];
+    if(/b$/.test(songKey)||["F","Bb","Eb","Ab","Db","Gb","Cb"].includes(songKey))
+      root = flats[root]||root; // prefer flats in flat keys
+    return root + qualities[deg];
+  }
+  function translateToken(tok){
+    // e.g. "1/4", "6", "1sus", "5+" etc
+    const m = tok.match(/^(\d)(?:\/(\d))?(.*)$/);
+    if(!m) return tok;
+    const chord = degreeToChord(+m[1]);
+    let out = chord;
+    if(m[2]) out += "/"+degreeToChord(+m[2]);
+    out += m[3]||"";
+    return out;
+  }
 
-  // 3. Chord definitions -----------------------------------------------------
+  // 3. Fret glyphs -----------------------------------------------------------
+  const FRET = ["", "⠂", "⠅", "⠇", "⠏", "⠗", "⠛", "⠞", "⠟", "⠥", "⠦", "⠧", "⠨", "⠩"];
+  const fmtChord = c => {
+    const base = c.replace(/\|(\d{1,2})$/,(_,n)=>FRET[n]||n);
+    return translateToken(base);
+  };
+
+  // 4. Chord definitions -----------------------------------------------------
   const chordDefs = {}, chordDisplay = {};
   while (idx < lines.length && !/^\s*Sections:/i.test(lines[idx])) {
-    const m = lines[idx].match(/^\s*([\w \-]+):\s*(.+)$/);
+    const m = lines[idx].match(/^[\s\t]*([\w \-]+):\s*(.+)$/);
     if (m) {
       const key = m[1].trim().toLowerCase();
       const disp = [m[2].trim()];
@@ -42,9 +81,9 @@ export default function songToHtml (source, arrangementName = "") {
     idx++;
   }
 
-  // 4. Lyric sections --------------------------------------------------------
+  // 5. Lyric sections (unchanged logic) -------------------------------------
   const lyricSections = {}, sectionOrder = [];
-  const sectionHeaderRE = /^\s{2,}([\w \-]+):\s*$/; // colon *required*
+  const sectionHeaderRE = /^\s{2,}([\w \-]+):\s*$/;
   while (idx < lines.length && !/^\s*Arrangements:/i.test(lines[idx])) {
     const mh = lines[idx].match(sectionHeaderRE);
     if (mh) {
@@ -58,12 +97,10 @@ export default function songToHtml (source, arrangementName = "") {
         idx++;
       }
       lyricSections[name] = lns;
-    } else {
-      idx++;
-    }
+    } else { idx++; }
   }
 
-  // 5. Arrangements ----------------------------------------------------------
+  // 6. Arrangements (unchanged) ---------------------------------------------
   const arrangements = {};
   if (idx < lines.length && /^\s*Arrangements:/i.test(lines[idx])) {
     idx++;
@@ -72,7 +109,6 @@ export default function songToHtml (source, arrangementName = "") {
       if (headMatch) {
         const indent = headMatch[1].length;
         const arrName = headMatch[2].trim();
-        // Confirm header
         let look = idx + 1;
         while (look < lines.length && !lines[look].trim()) look++;
         const nextIndent = look < lines.length ? (/^(\s*)/.exec(lines[look]) || [""])[0].length : 0;
@@ -88,53 +124,46 @@ export default function songToHtml (source, arrangementName = "") {
           idx++;
         }
         arrangements[arrName] = secs;
-      } else {
-        idx++;
-      }
+      } else { idx++; }
     }
   }
   if (!Object.keys(arrangements).length) arrangements.default = sectionOrder;
-
   const chosenArr = arrangements[arrangementName] || arrangements[Object.keys(arrangements)[0]];
 
-  // 6. Build HTML ------------------------------------------------------------
-  const out = [];
+  // 7. Build HTML ------------------------------------------------------------
+  const out=[];
   out.push(`<article class="song">`);
-
-  // 6a. Chord summary --------------------------------------------------------
   out.push(`<section class="song-chords"><h3 class="chords-title">Chords</h3>`);
-  chosenArr.forEach(sec => {
-    const disp = chordDisplay[sectionType(sec)] || [];
-    if (!disp.length) return;
-    let h = `<span class="chord-section-label">${esc(sec)}</span> ` + spanLine(disp[0]);
-    for (let i = 1; i < disp.length; i++) h += `<br class="line-break"/>` + spanLine(disp[i]);
+  chosenArr.forEach(sec=>{
+    const disp = chordDisplay[sectionType(sec)]||[];
+    if(!disp.length) return;
+    let h=`<span class="chord-section-label">${esc(sec)}</span> `+ spanLine(disp[0]);
+    for(let i=1;i<disp.length;i++) h+=`<br class="line-break"/>`+spanLine(disp[i]);
     out.push(`<p class="chord-line">${h}</p>`);
   });
   out.push(`</section>`);
 
-  // 6b. Lyric sections -------------------------------------------------------
-  chosenArr.forEach(sec => {
-    out.push(`<section class="song-section section-${sec.toLowerCase().replace(/[^a-z0-9]+/g, "-")}">`);
+  chosenArr.forEach(sec=>{
+    out.push(`<section class="song-section section-${sec.toLowerCase().replace(/[^a-z0-9]+/g,"-")}">`);
     out.push(`<h3 class="section-title">${esc(sec)}</h3>`);
-    const lns = lyricSections[sec] || [];
-    const cArr = chordDefs[sectionType(sec)] || [];
-    let ci = 0;
-    lns.forEach(ln => {
-      const htmlLine = processLyric(ln, () => {
-        const c = cArr[ci % cArr.length] || ""; ci++; return `<sup class="chord">${esc(fmtChord(c))}</sup>`;
-      });
+    const lns=lyricSections[sec]||[];
+    const cArr=chordDefs[sectionType(sec)]||[];
+    let ci=0;
+    lns.forEach(ln=>{
+      const htmlLine=processLyric(ln,()=>{
+        const c=cArr[ci % cArr.length]||""; ci++; return `<sup class="chord">${esc(fmtChord(c))}</sup>`;});
       out.push(`<p class="lyric-line">${htmlLine}</p>`);
     });
     out.push(`</section>`);
   });
   out.push(`</article>`);
 
-  return { html: out.join("\n"), arrangements: Object.keys(arrangements) };
+  return {html:out.join("\n"),arrangements:Object.keys(arrangements)};
 
-  // helper fns --------------------------------------------------------------
-  function spanLine(s) { return s.split(/\s+/).filter(Boolean).map(c => `<span class="chord">${esc(fmtChord(c))}</span>`).join(" "); }
-  function esc(s) { return String(s).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[ch])); }
-  function sectionType(sec) { return sec.split(/\s+/)[0].toLowerCase(); }
-  function processLyric(l, inject) { let o="", last=0; for(let i=0;i<l.length;i++){ if(l[i]==='^'){ o+=esc(l.slice(last,i))+inject(); last=i+1; } } return o+esc(l.slice(last)); }
-  function expandProg(exp) { const t=exp.split(/\s+/).filter(Boolean), out=[]; for(let i=0;i<t.length;i++){ let tk=t[i]; if(tk.startsWith('(')){ const g=[]; if(tk.endsWith(')')) g.push(tk.slice(1,-1)); else { g.push(tk.slice(1)); while(++i<t.length && !t[i].endsWith(')')) g.push(t[i]); if(i<t.length) g.push(t[i].slice(0,-1)); } let r=1; if(i+1<t.length && /^x\d+$/i.test(t[i+1])) r=+t[++i].slice(1); while(r--) out.push(...g); } else if(!/^x\d+$/i.test(tk)) out.push(tk); } return out; }
+  // helper -------------------------------------------------------------
+  function spanLine(s){return s.split(/\s+/).filter(Boolean).map(c=>`<span class="chord">${esc(fmtChord(c))}</span>`).join(" ");}
+  function esc(s){return String(s).replace(/[&<>"]|'"'/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#039;'}[ch]));}
+  function sectionType(sec){return sec.split(/\s+/)[0].toLowerCase();}
+  function processLyric(l,inj){let o="",last=0;for(let i=0;i<l.length;i++){if(l[i]==='^'){o+=esc(l.slice(last,i))+inj();last=i+1;}}return o+esc(l.slice(last));}
+  function expandProg(exp){const t=exp.split(/\s+/).filter(Boolean),out=[];for(let i=0;i<t.length;i++){let tk=t[i];if(tk.startsWith('(')){const g=[];if(tk.endsWith(')'))g.push(tk.slice(1,-1));else{g.push(tk.slice(1));while(++i<t.length && !t[i].endsWith(')'))g.push(t[i]);if(i<t.length)g.push(t[i].slice(0,-1));}let r=1;if(i+1<t.length && /^x\d+$/i.test(t[i+1]))r=+t[++i].slice(1);while(r--)out.push(...g);}else if(!/^x\d+$/i.test(tk))out.push(tk);}return out;}
 }
