@@ -7,7 +7,7 @@ import songToHtml from '../../lib/SongToHtml'
 
 export default function View({setId}) {
   const [songs] = useLocalStorage(KEY.LIST, [])
-  const [sets, setSets] = useLocalStorage(KEY.SET, [])
+  const [sets, setSets] = useLocalStorage(KEY.SETS, [])
 
   const [selectedSet, setSelectedSet] = useState(null)
   const [songToAdd, setSongToAdd] = useState('')
