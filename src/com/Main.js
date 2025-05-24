@@ -15,16 +15,17 @@ export default function Main() {
   const [state] = useLocalStorage(KEY.MAIN, STATE.LIST)
   const [list, setList] = useLocalStorage(KEY.LIST, [])
   
-  useEffect(()=>{
+  useEffect(() => {
     // if list is empty, add the example song
     if (list.length === 0) {
-      setList([{
-        id: uuid(),
-        name: 'Example',
-        raw: example,
-      }])
+      const addExample = async () => {
+        const response = await fetch(example)
+        const text = await response.text()
+        setList([{ id: uuid(), name: 'Example', raw: text }])
+      }
+      addExample()
     }
-  }, [])
+  }, [list, setList])
   
   return <main>
     {state === STATE.ADD && <Add />}

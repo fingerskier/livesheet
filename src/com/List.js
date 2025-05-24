@@ -14,11 +14,13 @@ export default function List() {
   const {setState} = useURL()
   
   
-  function addItemClick() {
+  async function addItemClick() {
+    const response = await fetch(example)
+    const text = await response.text()
     const newItem = {
       id: uuid(),
       name: 'Guide Me O Thou Great Jehovah',
-      raw: example,
+      raw: text,
     }
     setList([...list, newItem])
     setSelection(newItem)
