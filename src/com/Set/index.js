@@ -12,19 +12,29 @@ export default function Set() {
   const [selectedSetId, setSelectedSetId] = useState(null)
   
 
-  const add = ()=>{
+  const getNextSunday = () => {
+    const now = new Date()
+    const day = now.getDay()
+    const diff = day === 0 ? 7 : 7 - day
+    const nextSunday = new Date(now)
+    nextSunday.setDate(now.getDate() + diff)
+    nextSunday.setHours(0, 0, 0, 0)
+    return nextSunday.toISOString().slice(0, 16)
+  }
+
+  const add = () => {
     const name = window.prompt('Enter the name of the set')
-    if(name){
-      const dt = window.prompt('Enter the date/time for this set (YYYY-MM-DDThh:mm)', new Date().toISOString().slice(0,16))
+    if (name) {
       const newId = uuid()
-      setSets([...sets, {id:newId, name, datetime: dt || '', songs:[]}])
+      setSets([...sets, { id: newId, name, datetime: getNextSunday(), songs: [] }])
     }
   }
 
-  const remove = (id)=>{
+  const remove = id => {
     const yes = window.confirm('Are you sure you want to remove this set?')
     if (yes) {
       setSets(sets.filter(set => set.id !== id))
+      setSelectedSetId(null)
     }
   }
 
@@ -45,6 +55,6 @@ export default function Set() {
     </select>
     
     {/* remove the selected set */}
-    {selectedSetId && <button onClick={()=>setSets(sets.filter(set => set.id !== selectedSetId))}>{Icon.RED_X}</button>}
+    {selectedSetId && <button onClick={() => remove(selectedSetId)}>{Icon.RED_X}</button>}
   </>
 }
