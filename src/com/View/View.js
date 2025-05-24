@@ -24,16 +24,14 @@ export default function View() {
 
 
   useEffect(() => {
-    console.log('query',query)
     const thisItem = list.find(item => item.id === query.id)
     setData(thisItem)
   }, [query.id, showEdit])
 
 
   useEffect(()=>{
-    console.debug('data',data)
     if (data?.raw) {
-      const {html, arrangements} = songToHtml(data.raw)
+      const {_, arrangements} = songToHtml(data.raw)
       setArrangOpts(arrangements)
     }
   },[data])
@@ -41,8 +39,11 @@ export default function View() {
   useEffect(()=>{
     if (arrangement) {
       const {html} = songToHtml(data.raw, arrangement)
-      console.debug('html',html)
+      console.log('HTML', html)
       setHtml(html)
+      setShowLyrics(true)
+      setShowChords(true)
+      setShowChordset(false)
     }
   }, [arrangement])
 

@@ -30,7 +30,7 @@ export default function Edit({className, itemId, setShowEdit}) {
     const newList = list.map(item => item.id === id ? newItem : item)
     setList(newList)
     
-    setShowEdit(false)
+    if (typeof setShowEdit === 'function') setShowEdit(false)
   }
 
 
