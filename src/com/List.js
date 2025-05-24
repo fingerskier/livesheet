@@ -43,24 +43,24 @@ export default function List() {
   
   
   function Item({item}) {
-    return <div>
+    return <li>
       <a href={`?id=${item.id}#view`}>
         {item.name}
       </a>
       
       {/* <button onClick={() => editItemClick(item.id)}> ✏️ </button>
       <button onClick={() => viewItemClick(item.id)}> 🔍 </button> */}
-    </div>
+    </li>
   }
   
   
   return <div>
-    <div>
+    <ul className='song list'>
       {list.map(item => <Item key={item.id} item={item} />)}
-    </div>
+    </ul>
     
     <hr />
     
-    <button onClick={addItemClick}>Add</button>
+    <button onClick={addItemClick}>&nbsp;Add&nbsp;</button>
   </div>
 }

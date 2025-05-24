@@ -87,7 +87,7 @@ export default function Data() {
         style={{ display: 'none' }}
         onChange={handleFileChange}
       />
-      <button onClick={() => fileInput.current?.click()}>Upload</button>
+      <button onClick={() => fileInput.current?.click()}>{Icon.UPLOAD}</button>
     </>
   )
 }

@@ -49,20 +49,58 @@ h1 {
   gap: 1rem;
 }
 
+
 a {
+  position: relative;
+  border: medium outset var(--color-secondary-transparent);
+  border-radius: 0.66rem;
+  margin: 0.1rem;
+  padding: 0.1rem;
+  font-size: 1.5rem;
+  cursor: pointer;
+  background-color: var(--color-background);
   text-decoration: none;
 }
 
+a:hover {
+  border-style: solid;
+  background-color: var(--color-background-light);
+}
+
+a:active {
+  border-style: inset;
+}
+
+
+button {
+  position: relative;
+  border: medium outset var(--color-secondary-transparent);
+  border-radius: 0.66rem;
+  padding: 0rem;
+  font-size: 1.5rem;
+  cursor: pointer;
+  background-color: var(--color-background);
+}
+
+button:hover {
+  border-style: solid;
+  background-color: var(--color-background-light);
+}
+
+button:active {
+  border-style: inset;
+}
+
+
 .back.button {
   position: absolute;
-  top: 0.5rem;
   left: 0.5rem;
   font-size: 1.5rem;
   cursor: pointer;
-  background-color: transparent;
-  border: thick ridge #EEE;
+  background-color: var(--color-background-transparent);
+  border: thick ridge var(--color-secondary-transparent);
   border-radius: 1rem;
-  padding: 0.5rem;
+  padding: 0;
 }
 
 .back.button:hover {
@@ -105,4 +143,17 @@ a {
 
 br.line-break + * {
   padding-left: 4rem;
+}
+
+
+.song.list {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  justify-content: center;
+  gap: 0.5rem;
+  list-style-type: none;
+  padding: 0.1rem;
+  margin: 0.1rem;
 }
