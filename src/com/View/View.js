@@ -21,6 +21,10 @@ export default function View() {
   const [html, setHtml] = useState(null)
   const [showEdit, setShowEdit] = useState(false)
 
+  useEffect(() => {
+    setShowChordset(false)
+  }, [])
+
 
   useEffect(() => {
     const thisItem = list.find(item => item.id === query.id)
