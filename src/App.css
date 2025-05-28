@@ -113,14 +113,16 @@ button:active {
 
 
 .chord {
-  position: relative;
-  top: -0.5em;
   font-weight: bold;
   color: #3a86ff;
   font-size: 1.1rem;
   font-weight: 600;
   margin: 0 0.2em;
-  vertical-align: baseline;
+  vertical-align: super;
+}
+
+.song-chords {
+  display: none;
 }
 
 .lyric-line {
