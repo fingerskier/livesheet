@@ -87,7 +87,7 @@ export default function View({setId}) {
     </label>
 
     <p>Songs in this set:</p>
-    <ul>
+    <ul className='song list'>
       {selectedSet?.songs?.map((entry, i) => <SetSong key={i} entry={entry} />)}
     </ul>
 

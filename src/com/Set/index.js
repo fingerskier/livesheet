@@ -47,14 +47,14 @@ export default function Set() {
 
     <p>Your Sets:</p>
     <button onClick={add}>Add Set</button>
-    <select onChange={e=>setSelectedSetId(e.target.value)} value={selectedSetId}>
-      <option value=''>Select a set</option>
-      {(Array.isArray(sets) && sets.map((set, index) => (
-        <option key={index} value={set.id}>{set.name}</option>
-      )))}
-    </select>
-    
-    {/* remove the selected set */}
-    {selectedSetId && <button onClick={() => remove(selectedSetId)}>{Icon.RED_X}</button>}
+
+    <ul className='song list'>
+      {Array.isArray(sets) && sets.map((set, index) => (
+        <li key={index}>
+          <button onClick={() => setSelectedSetId(set.id)}>{set.name}</button>
+          <button onClick={() => remove(set.id)}>{Icon.RED_X}</button>
+        </li>
+      ))}
+    </ul>
   </>
 }
