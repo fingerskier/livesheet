@@ -34,6 +34,15 @@ export default function View({setId}) {
     updateSet({ ...selectedSet, songs: newSongs })
   }
 
+  const moveSong = (index, delta) => {
+    const newIndex = index + delta
+    if (newIndex < 0 || newIndex >= selectedSet.songs.length) return
+    const newSongs = [...selectedSet.songs]
+    const [item] = newSongs.splice(index, 1)
+    newSongs.splice(newIndex, 0, item)
+    updateSet({ ...selectedSet, songs: newSongs })
+  }
+
   const updateArrangement = (id, arrangement) => {
     const newSongs = selectedSet.songs.map(s =>
       s.songId === id ? { ...s, arrangement } : s
@@ -58,7 +67,7 @@ export default function View({setId}) {
     }
   }, [songToAdd])
 
-  function SetSong({entry}) {
+  function SetSong({entry, index}) {
     const song = songs.find(song => song.id === entry.songId)
     const [opts, setOpts] = useState([])
 
@@ -70,6 +79,8 @@ export default function View({setId}) {
     }, [song])
 
     return <li>
+      <button onClick={() => moveSong(index, -1)} disabled={index===0}>▲</button>
+      <button onClick={() => moveSong(index, 1)} disabled={index===selectedSet.songs.length-1}>▼</button>
       {song?.name}
       <select value={entry.arrangement || ''} onChange={e => updateArrangement(entry.songId, e.target.value)}>
         <option value=''>default</option>
@@ -88,7 +99,7 @@ export default function View({setId}) {
 
     <p>Songs in this set:</p>
     <ul className='song list'>
-      {selectedSet?.songs?.map((entry, i) => <SetSong key={i} entry={entry} />)}
+      {selectedSet?.songs?.map((entry, i) => <SetSong key={i} entry={entry} index={i} />)}
     </ul>
 
     <div>

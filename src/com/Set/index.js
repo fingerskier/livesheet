@@ -1,14 +1,17 @@
 import React, {useState} from 'react'
 import useLocalStorage from '../../hook/useLocalStorage'
+import useURL from '../../hook/useURL'
 import {KEY} from '../../constants'
 import {v4 as uuid} from 'uuid'
 import View from './View'
+import Display from './Display'
 import Icon from 'unicode-icons'
 
 
 export default function Set() {
+  const {query} = useURL()
   const [sets, setSets] = useLocalStorage(KEY.SETS, [])
-  
+
   const [selectedSetId, setSelectedSetId] = useState(null)
   
 
@@ -38,7 +41,11 @@ export default function Set() {
     }
   }
 
-  
+
+  if (query?.id) {
+    return <Display setId={query.id} />
+  }
+
   return <>
     <h2>Sets</h2>
     <p>A set is a collection of songs that are played together.</p>
@@ -51,7 +58,8 @@ export default function Set() {
     <ul className='song list'>
       {Array.isArray(sets) && sets.map((set, index) => (
         <li key={index}>
-          <button onClick={() => setSelectedSetId(set.id)}>{set.name}</button>
+          <a href={`?id=${set.id}#set`}>{set.name}</a>
+          <button onClick={() => setSelectedSetId(set.id)}>{Icon.PENCIL}</button>
           <button onClick={() => remove(set.id)}>{Icon.RED_X}</button>
         </li>
       ))}
