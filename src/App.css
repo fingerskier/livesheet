@@ -170,3 +170,10 @@ textarea {
   border-radius: 0.25rem;
   background-color: var(--color-background-light);
 }
+
+@media print {
+  header,
+  footer {
+    display: none;
+  }
+}
