@@ -25,3 +25,9 @@
   width: 100%;
   min-height: 13rem
 }
+
+@media print {
+  .controls {
+    display: none;
+  }
+}
