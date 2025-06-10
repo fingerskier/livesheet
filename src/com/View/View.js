@@ -89,14 +89,14 @@ export default function View() {
 
     <div className={style.content}>
       <div>
-        {showEdit && <Edit className={style.editor} itemId={query.id} setShowEdit={setShowEdit} />}
+        {showEdit && <Edit className={style.editor + ' ' + style.controls} itemId={query.id} setShowEdit={setShowEdit} />}
       </div>
     
       <div>
         {data?.sections && <Sections data={data.sections} itemId={query.id} /> }
 
         {data && arrangOpts && <>
-          <select onChange={e=>setArrangement(e.target.value)}>
+          <select className={style.controls} onChange={e=>setArrangement(e.target.value)}>
             <option value=''>Select Arrangement</option>
             {arrangOpts?.map((arrangement, index) => (
               <option key={index} value={arrangement}>{arrangement}</option>
