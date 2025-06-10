@@ -15,6 +15,9 @@
 header {
   position: relative;
   width: 100%;
+  padding: 0.5rem 1rem;
+  background-color: var(--color-background);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 main {
@@ -38,6 +41,9 @@ footer {
   align-items: center;
   justify-content: space-evenly;
   gap: 1rem;
+  padding: 0.5rem 1rem;
+  background-color: var(--color-background);
+  box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
 }
 
 
@@ -55,20 +61,24 @@ a {
   border: medium outset var(--color-secondary-transparent);
   border-radius: 0.66rem;
   margin: 0.1rem;
-  padding: 0.1rem;
-  font-size: 1.5rem;
+  padding: 0.1rem 0.4rem;
+  font-size: 1.25rem;
   cursor: pointer;
   background-color: var(--color-background);
   text-decoration: none;
+  color: var(--color-accent);
+  transition: background-color 0.1s ease;
 }
 
 a:hover {
   border-style: solid;
   background-color: var(--color-background-light);
+  color: var(--color-accent);
 }
 
 a:active {
   border-style: inset;
+  color: var(--color-accent);
 }
 
 
@@ -77,18 +87,22 @@ button {
   border: medium outset var(--color-secondary-transparent);
   border-radius: 0.66rem;
   padding: 0rem;
-  font-size: 1.5rem;
+  font-size: 1.25rem;
   cursor: pointer;
   background-color: var(--color-background);
+  color: var(--color-accent);
+  transition: background-color 0.1s ease;
 }
 
 button:hover {
   border-style: solid;
   background-color: var(--color-background-light);
+  color: var(--color-accent);
 }
 
 button:active {
   border-style: inset;
+  color: var(--color-accent);
 }
 
 
@@ -101,14 +115,17 @@ button:active {
   border: thick ridge var(--color-secondary-transparent);
   border-radius: 1rem;
   padding: 0;
+  color: var(--color-accent);
 }
 
 .back.button:hover {
   border-style: double;
+  color: var(--color-accent);
 }
 
 .back.button:active {
   border-style: groove;
+  color: var(--color-accent);
 }
 
 
