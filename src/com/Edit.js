@@ -1,5 +1,6 @@
 import {useEffect, useState} from 'react'
 import Sections from './Sections'
+import Arrangement from './Arrangement'
 import useLocalStorage from '../hook/useLocalStorage'
 import useURL from '../hook/useURL'
 import {KEY, STATE} from '../constants'
@@ -19,14 +20,14 @@ export default function Edit({className, itemId, setShowEdit}) {
     event.preventDefault()
     
     const formData = new FormData(event.target)
-    const id = formData.get('id')    
+    const id = formData.get('id')
     const name = formData.get('name')
     // const sections = JSON.parse(formData.get('sections'))
-    const raw = formData.get('raw')
+    const rawText = raw
     
     const newItem = {
       ...selection,
-      id, name, raw,
+      id, name, raw: rawText,
     }
     
     const newList = list.map(item => item.id === id ? newItem : item)
@@ -43,6 +44,7 @@ export default function Edit({className, itemId, setShowEdit}) {
   useEffect(() => {
     const thisItem = list.find(item => item.id === itemId)
     setSelection(thisItem)
+    setRaw(thisItem?.raw || '')
   }, [itemId])
   
   
@@ -56,7 +58,9 @@ export default function Edit({className, itemId, setShowEdit}) {
         
         {/* <Sections data={selection.sections} /> */}
 
-        <textarea name="raw" defaultValue={selection?.raw} />
+        <Arrangement raw={raw} onChange={setRaw} />
+
+        <textarea name="raw" value={raw} onChange={e=>setRaw(e.target.value)} />
         
         <button type="submit">Save</button>
       </form>
