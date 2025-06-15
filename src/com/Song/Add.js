@@ -3,6 +3,7 @@ import useLocalStorage from '../../hook/useLocalStorage'
 import {KEY, VIEW} from '../../constants'
 import {useHREF} from '../../lib/HREFContext'
 import {v4 as uuid} from 'uuid'
+import newSongText from '../../asset/new-song.txt'
 
 
 export default function Add() {
@@ -10,15 +11,19 @@ export default function Add() {
   const {goto} = useHREF()
   
   
-  const add = event=>{
+  const add = async event=>{
     event.preventDefault()
-    
+
     const form = event.target
     const formData = new FormData(form)
-    
+
+    const response = await fetch(newSongText)
+    const raw = await response.text()
+
     const song = {
       id: uuid(),
-      name: formData.get('name'),
+      name: formData.get('name') || 'New Song',
+      raw,
     }
     
     setSongs([...songs, song])
@@ -35,7 +40,7 @@ export default function Add() {
     <form onSubmit={add}>
       <label>
         Name:
-        <input name="name" />
+        <input name="name" defaultValue="New Song" />
       </label>
       
       <button type="submit">Add</button>
