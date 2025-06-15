@@ -4,7 +4,7 @@ import useURL from '../hook/useURL'
 import {KEY, STATE} from '../constants'
 import { v4 as uuid } from 'uuid'
 
-import example from '../asset/example.txt'
+import newSong from '../asset/new-song.txt'
 
 
 export default function List() {
@@ -15,11 +15,11 @@ export default function List() {
   
   
   async function addItemClick() {
-    const response = await fetch(example)
+    const response = await fetch(newSong)
     const text = await response.text()
     const newItem = {
       id: uuid(),
-      name: 'Guide Me O Thou Great Jehovah',
+      name: 'New Song',
       raw: text,
     }
     setList([...list, newItem])
