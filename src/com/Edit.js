@@ -4,6 +4,7 @@ import Arrangement from './Arrangement'
 import useLocalStorage from '../hook/useLocalStorage'
 import useURL from '../hook/useURL'
 import {KEY, STATE} from '../constants'
+import { downloadText, loadText } from '../lib/file'
 
 import style from './Edit.module.css'
 
@@ -61,8 +62,13 @@ export default function Edit({className, itemId, setShowEdit}) {
         <Arrangement raw={raw} onChange={setRaw} />
 
         <textarea name="raw" value={raw} onChange={e=>setRaw(e.target.value)} />
-        
+
         <button type="submit">Save</button>
+        <button type="button" onClick={() => downloadText(`${selection?.name || 'song'}.txt`, raw)}>Save File</button>
+        <button type="button" onClick={async () => {
+          const text = await loadText();
+          if (text !== null) setRaw(text);
+        }}>Load File</button>
       </form>
     </div>
   </div>
