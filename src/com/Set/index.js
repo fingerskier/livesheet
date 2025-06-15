@@ -1,10 +1,9 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import useLocalStorage from '../../hook/useLocalStorage'
 import useURL from '../../hook/useURL'
 import {KEY} from '../../constants'
 import {v4 as uuid} from 'uuid'
 import View from './View'
-import Display from './Display'
 import Icon from 'unicode-icons'
 
 
@@ -13,6 +12,12 @@ export default function Set() {
   const [sets, setSets] = useLocalStorage(KEY.SETS, [])
 
   const [selectedSetId, setSelectedSetId] = useState(null)
+
+  useEffect(() => {
+    if (query?.id) {
+      setSelectedSetId(query.id)
+    }
+  }, [query?.id])
   
 
   const getNextSunday = () => {
@@ -42,9 +47,6 @@ export default function Set() {
   }
 
 
-  if (query?.id) {
-    return <Display setId={query.id} />
-  }
 
   return <>
     <h2>Sets</h2>
