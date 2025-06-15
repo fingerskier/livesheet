@@ -10,6 +10,46 @@
 //     and all earlier fixes retained.
 // ---------------------------------------------------------------------------
 
+export function parseSong(source){
+  const lines=source.replace(/\r\n?/g,"\n").split("\n");
+  let idx=0;
+  const sectionHeader=/^\s{2,}([\w \-]+):\s*$/;
+  const sections=[];
+  while(idx<lines.length && !/^\s*Arrangements:/i.test(lines[idx])){
+    const m=lines[idx].match(sectionHeader);
+    if(m){
+      const name=m[1].trim();
+      sections.push(name);
+      idx++;
+      while(idx<lines.length &&
+            !sectionHeader.test(lines[idx]) &&
+            !/^\s*Arrangements:/i.test(lines[idx])) idx++; 
+    } else idx++; 
+  }
+
+  const arrangements={};
+  if(idx<lines.length && /^\s*Arrangements:/i.test(lines[idx])){
+    idx++;
+    const head=/^\s{2,}([\w \-]+):\s*$/;
+    while(idx<lines.length){
+      const mh=lines[idx].match(head);
+      if(mh){
+        const name=mh[1].trim();
+        idx++;
+        const items=[];
+        while(idx<lines.length && !head.test(lines[idx])){
+          if(lines[idx].trim()) items.push(lines[idx].trim());
+          idx++;
+        }
+        arrangements[name]=items;
+      } else idx++;
+    }
+  }
+  if(!Object.keys(arrangements).length) arrangements.default=sections;
+
+  return {sections, arrangements};
+}
+
 export default function songToHtml (source, arrangementName = "") {
   const lines = source.replace(/\r\n?/g, "\n").split("\n");
   let idx = 0;
