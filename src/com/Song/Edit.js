@@ -3,6 +3,7 @@ import {KEY} from '../../constants'
 import {useHREF} from '../../lib/HREFContext'
 import Sections from './Sections'
 import useLocalStorage from '../../hook/useLocalStorage'
+import { downloadText, loadText } from '../../lib/file'
 
 
 export default function Edit() {
@@ -80,8 +81,13 @@ export default function Edit() {
       </label>
       
       <Sections data={sections} onChange={updateSections} />
-      
+
       <button>Save</button>
+      <button type="button" onClick={() => downloadText(`${song.name || 'song'}.txt`, song.raw || '')}>Save File</button>
+      <button type="button" onClick={async () => {
+        const text = await loadText();
+        if (text !== null) setSong({...song, raw: text});
+      }}>Load File</button>
     </form>
   </div>
 }

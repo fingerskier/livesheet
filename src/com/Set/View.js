@@ -3,6 +3,7 @@ import useLocalStorage from '../../hook/useLocalStorage'
 import {KEY} from '../../constants'
 import Icon from 'unicode-icons'
 import songToHtml from '../../lib/SongToHtml'
+import { downloadJSON, loadJSON } from '../../lib/file'
 
 
 export default function View({setId}) {
@@ -92,6 +93,13 @@ export default function View({setId}) {
 
   return <div>
     <h2>Set: {selectedSet?.name}</h2>
+    <div>
+      <button onClick={() => downloadJSON(`${selectedSet?.name || 'set'}.json`, selectedSet)}>Save Set</button>
+      <button onClick={async () => {
+        const data = await loadJSON();
+        if (data) updateSet({ ...selectedSet, ...data });
+      }}>Load Set</button>
+    </div>
     <label>
       Date/Time:
       <input type="datetime-local" value={selectedSet?.datetime || ''} onChange={e => updateSet({ ...selectedSet, datetime: e.target.value })} />
