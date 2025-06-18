@@ -59,7 +59,7 @@ export default function Edit({className, itemId, setShowEdit}) {
         
         {/* <Sections data={selection.sections} /> */}
 
-        <Arrangement raw={raw} onChange={setRaw} />
+        {/* <Arrangement raw={raw} onChange={setRaw} /> */}
 
         <textarea name="raw" value={raw} onChange={e=>setRaw(e.target.value)} />
 
