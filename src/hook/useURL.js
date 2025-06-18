@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import useLocalStorage from './useLocalStorage'
-import {KEY} from '../constants'
+import {KEY, STATE} from '../constants'
 
 
 export default function useURLParams() {
@@ -32,9 +32,11 @@ export default function useURLParams() {
     
     
     const handleURLChange = () => {
-      // Handle hash changes
+      // Handle hash changes.  If no hash is present
+      // default to the list view rather than clearing
+      // the stored state which would hide the UI.
       const hash = window.location.hash.slice(1);
-      setState(hash)
+      setState(hash || STATE.LIST)
       
       // Handle query string changes
       const queryString = window.location.search;
