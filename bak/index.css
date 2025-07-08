@@ -1,0 +1,35 @@
+:root {
+  /* slightly darker text for better contrast and an accent color */
+  --color-primary: hsl(34, 32%, 15%);
+  --color-primary-transparent: hsla(34, 32%, 15%, 0.5);
+  --color-secondary: hsl(34, 35%, 35%);
+  --color-secondary-transparent: hsla(34, 35%, 35%, 0.5);
+  /* parchment background retained but lightened a bit */
+  --color-background: #f5efe4;
+  --color-background-light: #fbf8f2;
+  --color-background-transparent: rgba(245, 239, 228, 0.5);
+  /* accent similar to good.is */
+  --color-accent: #0066cc;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  color: var(--color-primary);
+  background-color: var(--color-background);
+}
+
+body {
+  margin: 0;
+  /* use a clean sans-serif stack similar to good.is */
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  line-height: 1.6;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
