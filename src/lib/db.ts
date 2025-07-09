@@ -46,10 +46,6 @@ export const db = new AppDB()
 
 
 export async function initDb () {
-  if (!dexieConfig.databaseUrl) {
-    throw new Error('dexie-cloud.json must include "databaseUrl"')
-  }
-
   db.cloud.configure(dexieConfig)
   await db.open()
 }
