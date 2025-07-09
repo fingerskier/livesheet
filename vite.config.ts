@@ -4,6 +4,7 @@ import { VitePWA } from 'vite-plugin-pwa'
 
 // https://vite.dev/config/
 export default defineConfig({
+  base: '/livesheet/',
   plugins: [
     react(),
     VitePWA({
@@ -27,13 +28,13 @@ export default defineConfig({
         display: 'standalone',
         icons: [
           {
-            src: '/web-app-manifest-192x192.png',
+            src: 'web-app-manifest-192x192.png',
             sizes: '192x192',
             type: 'image/png',
             purpose: 'maskable',
           },
           {
-            src: '/web-app-manifest-512x512.png',
+            src: 'web-app-manifest-512x512.png',
             sizes: '512x512',
             type: 'image/png',
             purpose: 'maskable',
