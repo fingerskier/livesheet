@@ -44,7 +44,6 @@ class AppDB extends Dexie {
 export const db = new AppDB()
 
 
-
 export async function initDb () {
   db.cloud.configure(dexieConfig)
   await db.open()

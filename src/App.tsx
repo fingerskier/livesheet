@@ -10,6 +10,7 @@ import SetAdd from './com/SetAdd'
 import SetEdit from './com/SetEdit'
 import Live from './com/Live'
 import Settings from './com/Settings'
+import Song from './com/SongView'
 
 import './App.css'
 
@@ -35,6 +36,10 @@ export default function App() {
 
       <State name='song-edit'>
         <SongEdit />
+      </State>
+
+      <State name='song-view'>
+        <Song />
       </State>
 
       <State name='sets'>

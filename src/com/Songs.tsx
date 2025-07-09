@@ -13,12 +13,13 @@ export default function Songs() {
     }
     load()
   }, [])
-
+  
+  
   return <div>
     <h2>Songs</h2>
     <ul>
       {songs.map(song => <li key={song.id}>
-        <StateButton to='song-edit' id={song.id}>{song.name}</StateButton>
+        <StateButton to='song-edit' data={{id:song.id}}>{song.name}</StateButton>
       </li>)}
     </ul>
   </div>
