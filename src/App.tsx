@@ -1,24 +1,25 @@
 import { useState } from 'react'
 import { StateMachine, State } from 'ygdrassil'
-import Controls from './com/Controls'
-import Idle from './com/Idle'
-import Songs from './com/Songs'
-import SongAdd from './com/SongAdd'
-import SongEdit from './com/SongEdit'
-import Sets from './com/Sets'
-import SetAdd from './com/SetAdd'
-import SetEdit from './com/SetEdit'
-import Live from './com/SetView'
-import Settings from './com/Settings'
-import Song from './com/SongView'
+import Controls from '@/com/Controls'
+import Navigation from '@/com/Navigation'
+import Idle from '@/com/Idle'
+import Songs from '@/com/Songs'
+import SongAdd from '@/com/SongAdd'
+import SongEdit from '@/com/SongEdit'
+import Sets from '@/com/Sets'
+import SetAdd from '@/com/SetAdd'
+import SetEdit from '@/com/SetEdit'
+import Live from '@/com/SetView'
+import Settings from '@/com/Settings'
+import Song from '@/com/SongView'
 
-import './App.css'
+import '@/App.css'
 
 
 export default function App() {
   return <>
     <StateMachine name='live' initial='idle'>
-      <Controls />
+      <Navigation />
 
       <div className='main container'>
         <State name='idle'>
@@ -61,5 +62,7 @@ export default function App() {
           <Settings />
         </State>
       </div>
+
+      <Controls />
     </StateMachine>
   </>}

@@ -1,13 +1,30 @@
 import React from 'react'
-import {StateButton} from 'ygdrassil'
+import useLocalStore from '@/hook/useLocalStore'
 
 
 export default function Controls() {
+  const store = useLocalStore()
+
+
   return <div className='controls'>
-    <StateButton to='songs'>All Songs</StateButton>
-    <StateButton to='song-add'>Add Song</StateButton>
-    <StateButton to='sets'>All Sets</StateButton>
-    <StateButton to='set-add'>Add Set</StateButton>
-    <StateButton to='settings'>Settings</StateButton>
+    <label>
+      {store?.showChordset ? 'Hide Chordset' : 'Show Chordset'}
+
+      <input
+        type='checkbox'
+        checked={store.showChordset}
+        onChange={e => store.showChordset = e.target.checked}
+      />
+    </label>
+
+    <label>
+      {store.showChords ? 'Hide Chords' : 'Show Chords'}
+
+      <input
+        type='checkbox'
+        checked={store.showChords}
+        onChange={e => store.showChords = e.target.checked}
+      />
+    </label>
   </div>
 }
