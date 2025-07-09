@@ -7,7 +7,7 @@ import { ExpirationPlugin } from 'workbox-expiration'
 // injected by workbox with the list of assets to precache
 declare let self: ServiceWorkerGlobalScope & { __WB_MANIFEST: Array<any> }
 
-self.skipWaiting()
+(self as any).skipWaiting()
 clientsClaim()
 precacheAndRoute(self.__WB_MANIFEST)
 
