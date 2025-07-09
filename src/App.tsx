@@ -16,8 +16,6 @@ import './App.css'
 
 
 export default function App() {
-  const [count, setCount] = useState(0)
-
   return <>
     <StateMachine name='live' initial='idle' className='main container'>
       <Controls />
