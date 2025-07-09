@@ -1,7 +1,4 @@
-import React from 'react'
 import useLocalStore from '@/hook/useLocalStore'
-
-import style from '@/style/Controls.module.css'
 
 
 export default function Controls() {

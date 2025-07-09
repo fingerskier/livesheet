@@ -4,6 +4,8 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist",
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
@@ -17,7 +19,6 @@
     "react-confection": "^4.0.0",
     "react-dom": "^19.1.0",
     "unicode-icons": "^2025.6.7",
-    "vite-plugin-pwa": "^1.0.1",
     "ygdrassil": "^2025.7.9"
   },
   "devDependencies": {
@@ -31,6 +32,7 @@
     "globals": "^16.3.0",
     "typescript": "~5.8.3",
     "typescript-eslint": "^8.35.1",
-    "vite": "^7.0.3"
+    "vite": "^7.0.3",
+    "vite-plugin-pwa": "^1.0.1"
   }
 }

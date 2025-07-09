@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { StateMachine, State } from 'ygdrassil'
 import Controls from '@/com/Controls'
 import Navigation from '@/com/Navigation'

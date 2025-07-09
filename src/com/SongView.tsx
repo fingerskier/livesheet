@@ -34,12 +34,12 @@ export default function Song() {
 
     const elements = document.querySelectorAll('.chord')
     elements.forEach(el => {
-      el.style.display = store.showChords ? 'inline-block' : 'none'
+      (el as HTMLElement).style.display = store.showChords ? 'inline-block' : 'none'
     })
   
     const el = document.querySelector('.song-chords')
     if (!el) return
-    el.style.display = store.showChordset ? 'block' : 'none'
+    (el as HTMLElement).style.display = store.showChordset ? 'block' : 'none'
   }, [song, store.showChords, store.showChordset])
 
 
