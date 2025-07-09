@@ -54,12 +54,10 @@
 
 /*  */
 
-@media (print) {
-  .controls {
-    display: none;
-  }
+@media print {
+  .controls,
   .navigation {
-    display: none;
+    display: none !important;
   }
 }
 
