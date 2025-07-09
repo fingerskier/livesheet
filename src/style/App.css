@@ -42,4 +42,51 @@
   width: 100%;
   height: 100%;
   overflow-y: scroll;
+  padding: 1rem;
+  margin: 0;
+  
+  background-color: hsl(38, 76%, 77%);
+  border-radius: 8px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+  
+  color: hsl(270, 100%, 4%);
+}
+
+/*  */
+
+@media (print) {
+  .controls {
+    display: none;
+  }
+  .navigation {
+    display: none;
+  }
+}
+
+/*  */
+
+.song {
+  padding-bottom: 5rem;
+}
+
+.chord-section-label {
+  font-weight: bold;
+}
+
+.chord {
+  font-weight: bolder;
+}
+
+.chord-line .chord {
+  font-weight: normal;
+}
+
+
+.song-section {
+  width: auto;
+  text-align: left;
+}
+
+.lyric-line {
+  width: auto;
 }

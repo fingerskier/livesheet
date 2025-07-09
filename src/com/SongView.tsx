@@ -1,17 +1,17 @@
 import {useEffect, useState} from 'react'
 import {useStateMachine} from 'ygdrassil'
-import {db, type Song} from '../lib/db'
-import songToHtml from '../lib/SongToHtml'
+import {db, type Song} from '@/lib/db'
+import songToHtml from '@/lib/SongToHtml'
+import useLocalStore from '@/hook/useLocalStore'
 
 
-/**
- * 
- */
 export default function Song() {
   const {query} = useStateMachine()
   const [song, setSong] = useState<Song | null>(null)
   const [html, setHtml] = useState('')
-
+  const store = useLocalStore()
+  
+  
   useEffect(() => {
     async function load() {
       if (query.id) {
@@ -26,6 +26,22 @@ export default function Song() {
     }
     load()
   }, [query.id])
+
+
+  useEffect(() => {
+    if (!song) return
+
+
+    const elements = document.querySelectorAll('.chord')
+    elements.forEach(el => {
+      el.style.display = store.showChords ? 'inline-block' : 'none'
+    })
+  
+    const el = document.querySelector('.song-chords')
+    if (!el) return
+    el.style.display = store.showChordset ? 'block' : 'none'
+  }, [song, store.showChords, store.showChordset])
+
 
   if (!song) return <p>Select a song to view.</p>
 

@@ -13,7 +13,7 @@ import Live from '@/com/SetView'
 import Settings from '@/com/Settings'
 import Song from '@/com/SongView'
 
-import '@/App.css'
+import '@/style/App.css'
 
 
 export default function App() {

@@ -1,30 +1,24 @@
 import React from 'react'
 import useLocalStore from '@/hook/useLocalStore'
 
+import style from '@/style/Controls.module.css'
+
 
 export default function Controls() {
   const store = useLocalStore()
 
 
   return <div className='controls'>
-    <label>
+    <button type='button'
+      onClick={() => store.showChordset = !store.showChordset}
+    >
       {store?.showChordset ? 'Hide Chordset' : 'Show Chordset'}
+    </button>
 
-      <input
-        type='checkbox'
-        checked={store.showChordset}
-        onChange={e => store.showChordset = e.target.checked}
-      />
-    </label>
-
-    <label>
-      {store.showChords ? 'Hide Chords' : 'Show Chords'}
-
-      <input
-        type='checkbox'
-        checked={store.showChords}
-        onChange={e => store.showChords = e.target.checked}
-      />
-    </label>
+    <button type='button'
+      onClick={() => store.showChords = !store.showChords}
+    >
+      {store?.showChords ? 'Hide Chords' : 'Show Chords'}
+    </button>
   </div>
 }
