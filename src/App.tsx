@@ -17,47 +17,49 @@ import './App.css'
 
 export default function App() {
   return <>
-    <StateMachine name='live' initial='idle' className='main container'>
+    <StateMachine name='live' initial='idle'>
       <Controls />
 
-      <State name='idle'>
-        <Idle />
-      </State>
+      <div className='main container'>
+        <State name='idle'>
+          <Idle />
+        </State>
 
-      <State name='songs'>
-        <Songs />
-      </State>
+        <State name='songs'>
+          <Songs />
+        </State>
 
-      <State name='song-add'>
-        <SongAdd />
-      </State>
+        <State name='song-add'>
+          <SongAdd />
+        </State>
 
-      <State name='song-edit'>
-        <SongEdit />
-      </State>
+        <State name='song-edit'>
+          <SongEdit />
+        </State>
 
-      <State name='song-view'>
-        <Song />
-      </State>
+        <State name='song-view'>
+          <Song />
+        </State>
 
-      <State name='sets'>
-        <Sets />
-      </State>
+        <State name='sets'>
+          <Sets />
+        </State>
 
-      <State name='set-add'>
-        <SetAdd />
-      </State>
+        <State name='set-add'>
+          <SetAdd />
+        </State>
 
-      <State name='set-edit'>
-        <SetEdit />
-      </State>
+        <State name='set-edit'>
+          <SetEdit />
+        </State>
 
-      <State name='set-view'>
-        <Live />
-      </State>
+        <State name='set-view'>
+          <Live />
+        </State>
 
-      <State name='settings'>
-        <Settings />
-      </State>
+        <State name='settings'>
+          <Settings />
+        </State>
+      </div>
     </StateMachine>
   </>}
