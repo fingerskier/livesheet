@@ -1,6 +1,6 @@
 import Dexie from 'dexie'
 import type { Table } from 'dexie'
-import dexieCloud, { type DexieCloudOptions } from 'dexie-cloud-addon'
+import dexieCloud from 'dexie-cloud-addon'
 import dexieConfig from '../../dexie-cloud.json' assert { type: 'json' }
 
 
@@ -45,7 +45,7 @@ export const db = new AppDB()
 
 
 export async function initDb () {
-  db.cloud.configure(dexieConfig)
+  db.cloud.configure(dexieConfig as any)
   await db.open()
 }
 
@@ -65,5 +65,4 @@ export async function login (hints?: { email?: string }) {
 
 export async function logout () {
   await db.cloud.logout()
-  db.close()
-}
+  db.close()}
