@@ -1,6 +1,15 @@
 import { useState } from 'react'
-import {StateMachine,State} from 'ygdrassil'
+import { StateMachine, State } from 'ygdrassil'
 import Controls from './com/Controls'
+import Idle from './com/Idle'
+import Songs from './com/Songs'
+import SongAdd from './com/SongAdd'
+import SongEdit from './com/SongEdit'
+import Sets from './com/Sets'
+import SetAdd from './com/SetAdd'
+import SetEdit from './com/SetEdit'
+import Live from './com/Live'
+import Settings from './com/Settings'
 
 import './App.css'
 
@@ -13,40 +22,39 @@ export default function App() {
       <Controls />
 
       <State name='idle'>
-        <p>Welcome to LiveSheet!</p>
+        <Idle />
       </State>
 
       <State name='songs'>
-        <p>All Songs</p>
+        <Songs />
       </State>
 
       <State name='song-add'>
-        <p>Add Song</p>
+        <SongAdd />
       </State>
 
       <State name='song-edit'>
-        <p>Edit Song</p>
+        <SongEdit />
       </State>
 
       <State name='sets'>
-        <p>All Sets</p>
+        <Sets />
       </State>
 
       <State name='set-add'>
-        <p>Add Set</p>
+        <SetAdd />
       </State>
 
       <State name='set-edit'>
-        <p>Edit Set</p>
+        <SetEdit />
       </State>
 
       <State name='live'>
-        <p>Live Mode</p>
+        <Live />
       </State>
 
       <State name='settings'>
-        <p>Settings</p>
+        <Settings />
       </State>
     </StateMachine>
-  </>
-}
+  </>}
