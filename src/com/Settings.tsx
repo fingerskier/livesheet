@@ -1,3 +1,8 @@
+import DexieLogin from './DexieLogin'
+
 export default function Settings() {
-  return <p>Settings</p>
+  return <div>
+    <h2>Settings</h2>
+    <DexieLogin />
+  </div>
 }
