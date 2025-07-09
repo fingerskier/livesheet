@@ -16,6 +16,9 @@ export default defineConfig({
         'favicon-96x96.png',
         'robots.txt',
       ],
+      srcDir: 'src',
+      filename: 'sw.ts',
+      strategies: 'injectManifest',
       manifest: {
         name: 'Livesheet',
         short_name: 'Livesheet',
