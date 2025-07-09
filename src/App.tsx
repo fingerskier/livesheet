@@ -8,7 +8,7 @@ import SongEdit from './com/SongEdit'
 import Sets from './com/Sets'
 import SetAdd from './com/SetAdd'
 import SetEdit from './com/SetEdit'
-import Live from './com/Live'
+import Live from './com/SetView'
 import Settings from './com/Settings'
 import Song from './com/SongView'
 
@@ -54,7 +54,7 @@ export default function App() {
         <SetEdit />
       </State>
 
-      <State name='live'>
+      <State name='set-view'>
         <Live />
       </State>
 
