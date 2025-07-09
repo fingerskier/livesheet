@@ -74,7 +74,7 @@ export default function songToHtml (
   // 2. Helpers for number→chord --------------------------------------------
   const chromatic = ["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"];
   // prefer flats for flat keys
-  const flats    = {"C#":"Db","D#":"Eb","F#":"Gb","G#":"Ab","A#":"Bb"};
+  const flats: { [key: string]: string } = {"C#":"Db","D#":"Eb","F#":"Gb","G#":"Ab","A#":"Bb"};
   const majorIntervals = [0,2,4,5,7,9,11];
   const qualities = ["","m","m","","","m","dim"];
   function normalizeKey(k: string): string { return k.replace(/♯/g, "#").replace(/♭/g, "b") }
