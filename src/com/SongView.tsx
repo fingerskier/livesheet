@@ -31,16 +31,17 @@ export default function Song() {
   useEffect(() => {
     if (!song) return
 
-
     const elements = document.querySelectorAll('.chord')
     elements.forEach(el => {
       (el as HTMLElement).style.display = store.showChords ? 'inline-block' : 'none'
     })
-  
-    const el = document.querySelector('.song-chords')
-    if (!el) return
-    (el as HTMLElement).style.display = store.showChordset ? 'block' : 'none'
-  }, [song, store.showChords, store.showChordset])
+
+    const chordEl = document.querySelector('.song-chords')
+    if (chordEl) (chordEl as HTMLElement).style.display = store.showChordset ? 'block' : 'none'
+
+    const metaEl = document.querySelector('.song-meta')
+    if (metaEl) (metaEl as HTMLElement).style.display = store.showMeta ? 'block' : 'none'
+  }, [song, store.showChords, store.showChordset, store.showMeta])
 
 
   if (!song) return <p>Select a song to view.</p>
