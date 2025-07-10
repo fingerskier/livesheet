@@ -3,7 +3,7 @@ import { useStateMachine } from 'ygdrassil'
 import { db, type Song } from '../lib/db'
 
 export default function SongEdit() {
-  const { query } = useStateMachine()
+  const { query, go } = useStateMachine()
   const [song, setSong] = useState<Song | null>(null)
   const [name, setName] = useState('')
   const [text, setText] = useState('')
@@ -29,6 +29,12 @@ export default function SongEdit() {
     await db.songs.put({ ...song, name, text })
   }
 
+  async function handleSaveAndView() {
+    if (!song) return
+    await db.songs.put({ ...song, name, text })
+    go('song-view', { id: song.id })
+  }
+
   if (!song) return <p>Select a song to edit.</p>
 
   return <form onSubmit={handleSubmit}>
@@ -37,5 +43,6 @@ export default function SongEdit() {
     <textarea value={text} onChange={e => setText(e.target.value)} />
     <br />
     <button type='submit'>Save</button>
+    <button type='button' onClick={handleSaveAndView}>Save &amp; View</button>
   </form>
 }
