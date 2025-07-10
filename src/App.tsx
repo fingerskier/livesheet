@@ -22,14 +22,14 @@ export default function App() {
 
   return <>
     <button
-      className='print-mode'
+      className='print mode button'
       type='button' onClick={() => setPrintMode(!printMode)}
     >
-        {Icon.PRINTER}
+        {Icon.DEVICE.PRINTER}🖨️
     </button>
 
     <StateMachine name='live' initial='idle'>
-      <Navigation />
+      {!printMode && <Navigation />}
 
       <div className='main container'>
         <State name='idle'>
@@ -73,6 +73,6 @@ export default function App() {
         </State>
       </div>
 
-      <Controls />
+      {!printMode && <Controls />}
     </StateMachine>
   </>}
