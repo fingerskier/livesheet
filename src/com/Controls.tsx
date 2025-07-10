@@ -17,5 +17,11 @@ export default function Controls() {
     >
       {store?.showChords ? 'Hide Chords' : 'Show Chords'}
     </button>
+
+    <button type='button'
+      onClick={() => store.showMeta = !store.showMeta}
+    >
+      {store?.showMeta ? 'Hide Info' : 'Show Info'}
+    </button>
   </div>
 }
