@@ -1,6 +1,8 @@
+import {useState} from 'react'
 import { StateMachine, State } from 'ygdrassil'
 import Controls from '@/com/Controls'
 import Navigation from '@/com/Navigation'
+import Icon from 'unicode-icons'
 import Idle from '@/com/Idle'
 import Songs from '@/com/Songs'
 import SongAdd from '@/com/SongAdd'
@@ -16,7 +18,16 @@ import '@/style/App.css'
 
 
 export default function App() {
+  const [printMode, setPrintMode] = useState(false)
+
   return <>
+    <button
+      className='print-mode'
+      type='button' onClick={() => setPrintMode(!printMode)}
+    >
+        {Icon.PRINTER}
+    </button>
+
     <StateMachine name='live' initial='idle'>
       <Navigation />
 

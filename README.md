@@ -10,7 +10,12 @@ Song charts are translated into HTML so they can be displayed and stylized in a 
 Songs need to be specifically formatted as follows:
 
 ```
-Title [Key] (Tempo)
+Title
+  author: John Doe, Jane Doe
+  key: C
+  tempo: 128
+  time: 4/4
+  
   verses: A B C  D E F
   chorus: D E F  A B C
   bridge: G A B  C D E
