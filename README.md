@@ -57,7 +57,9 @@ Arrangements:
     Chorus
 ```
 
-...there will always be a _default_ arrangement which displays the sections in the order they are given.
+* There will always be a _default_ arrangement which displays the sections in the order they are given.
+* The first four, metadata lines under are reserved- you cannot have song-sections name `key`, `tempo`, `time`, or `author`.
+* 
 
 
 ## Sets

@@ -8,6 +8,8 @@ import useLocalStore from '@/hook/useLocalStore'
 export default function Song() {
   const {query} = useStateMachine()
   const [song, setSong] = useState<Song | null>(null)
+  const [arrangements, setArrangements] = useState<string[]>([])
+  const [arrangement, setArrangement] = useState('')
   const [html, setHtml] = useState('')
   const store = useLocalStore()
   
@@ -20,12 +22,23 @@ export default function Song() {
         if (found) {
           setSong(found)
           const result = songToHtml(found.text)
+          setArrangements(result.arrangements)
+          setArrangement(result.arrangements[0] || '')
           setHtml(result.html)
         }
       }
     }
     load()
   }, [query.id])
+
+
+  useEffect(() => {
+    if (!song) return
+
+    const result = songToHtml(song.text, arrangement)
+    setHtml(result.html)
+    setArrangements(result.arrangements)
+  }, [song, arrangement])
 
 
   useEffect(() => {
@@ -41,7 +54,7 @@ export default function Song() {
 
     const metaEl = document.querySelector('.song-meta')
     if (metaEl) (metaEl as HTMLElement).style.display = store.showMeta ? 'block' : 'none'
-  }, [song, store.showChords, store.showChordset, store.showMeta])
+  }, [html, store.showChords, store.showChordset, store.showMeta])
 
 
   if (!song) return <p>Select a song to view.</p>
@@ -49,6 +62,13 @@ export default function Song() {
   return (
     <div>
       <h2>{song.name}</h2>
+      {arrangements.length > 1 && (
+        <select value={arrangement} onChange={e => setArrangement(e.target.value)}>
+          {arrangements.map((arr, i) => (
+            <option key={i} value={arr}>{arr}</option>
+          ))}
+        </select>
+      )}
       <div dangerouslySetInnerHTML={{__html: html}} />
       <StateButton to='song-edit' data={{ id: song.id }}>Edit</StateButton>
     </div>
