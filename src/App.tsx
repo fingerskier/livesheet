@@ -1,4 +1,4 @@
-import {useState} from 'react'
+import {useEffect, useState} from 'react'
 import { StateMachine, State } from 'ygdrassil'
 import Controls from '@/com/Controls'
 import Navigation from '@/com/Navigation'
@@ -18,7 +18,31 @@ import '@/style/App.css'
 
 
 export default function App() {
+  const [printMode, setPrintMode] = useState(false)
+  
+  useEffect(()=>{
+    const elements = document.querySelectorAll('.dont.print')
+
+    if (printMode) {
+      elements.forEach(el => {
+        el.classList.add('hidden')
+      })
+    } else {
+      elements.forEach(el => {
+        el.classList.remove('hidden')
+      })
+    }
+  }, [printMode])
+  
+  
   return <>
+    <button
+      className='print mode button'
+      type='button' onClick={()=>setPrintMode(!printMode)}
+    >
+        {Icon.DEVICE.PRINTER}🖨️
+    </button>
+
     <StateMachine name='live' initial='idle'>
       <Navigation />
 

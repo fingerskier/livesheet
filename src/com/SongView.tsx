@@ -42,18 +42,39 @@ export default function Song() {
 
 
   useEffect(() => {
-    if (!song) return
+    console.debug('arr', arrangements)
+  }, [arrangements])
+
+
+  useEffect(() => {
+    if (!html) return
 
     const elements = document.querySelectorAll('.chord')
     elements.forEach(el => {
-      (el as HTMLElement).style.display = store.showChords ? 'inline-block' : 'none'
+      if (store.showChords) {
+        el.classList.remove('hidden')
+      } else {
+        el.classList.add('hidden')
+      }
     })
 
     const chordEl = document.querySelector('.song-chords')
-    if (chordEl) (chordEl as HTMLElement).style.display = store.showChordset ? 'block' : 'none'
+    if (chordEl) {
+      if (store.showChordset) {
+        chordEl.classList.remove('hidden')
+      } else {  
+        chordEl.classList.add('hidden')
+      }
+    }
 
     const metaEl = document.querySelector('.song-meta')
-    if (metaEl) (metaEl as HTMLElement).style.display = store.showMeta ? 'block' : 'none'
+    if (metaEl) {
+      if (store.showMeta) {
+        metaEl.classList.remove('hidden')
+      } else {
+        metaEl.classList.add('hidden')
+      }
+    }
   }, [html, store.showChords, store.showChordset, store.showMeta])
 
 
@@ -62,15 +83,26 @@ export default function Song() {
   return (
     <div>
       <h2>{song.name}</h2>
-      {arrangements.length > 1 && (
-        <select value={arrangement} onChange={e => setArrangement(e.target.value)}>
+      
+      {arrangements.length && (
+        <select
+          className='dont print'
+          value={arrangement}
+          onChange={e => setArrangement(e.target.value)}
+        >
           {arrangements.map((arr, i) => (
             <option key={i} value={arr}>{arr}</option>
           ))}
         </select>
       )}
+      
+      <StateButton
+        className='dont print'
+        to='song-edit'
+        data={{ id: song.id }}
+      >Edit</StateButton>
+      
       <div dangerouslySetInnerHTML={{__html: html}} />
-      <StateButton to='song-edit' data={{ id: song.id }}>Edit</StateButton>
     </div>
   )
 }

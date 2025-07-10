@@ -42,6 +42,7 @@
   overflow-y: scroll;
   padding: 1rem;
   margin: 0;
+  flex-grow: 1;
   
   background-color: hsl(38, 76%, 77%);
   border-radius: 8px;
@@ -50,11 +51,18 @@
   color: hsl(270, 100%, 4%);
 }
 
+
+.hidden {
+  display: none !important;
+}
+
+
 /*  */
 
 @media print {
   .controls,
-  .navigation {
+  .navigation,
+  .dont.print {
     display: none !important;
   }
 
@@ -93,6 +101,14 @@
   font-size: 1.5rem;
   color: hsl(270, 100%, 4%);
   z-index: 1000;
+}
+
+.song.edit {
+  flex-grow: 1;
+}
+
+.song.edit textarea {
+  width: 100%;
 }
 
 /*  */

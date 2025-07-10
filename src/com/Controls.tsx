@@ -5,7 +5,7 @@ export default function Controls() {
   const store = useLocalStore()
 
 
-  return <div className='controls'>
+  return <div className='controls dont print'>
     <button type='button'
       onClick={() => store.showChordset = !store.showChordset}
     >
