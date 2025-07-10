@@ -53,9 +53,17 @@ export function parseSong(source: string): {
   return {sections, arrangements};
 }
 
+export interface SongMeta {
+  key: string | null
+  tempo: number | null
+  authors: string[]
+  time: string | null
+}
+
 export interface SongToHtmlResult {
-  html: string;
-  arrangements: string[];
+  html: string
+  arrangements: string[]
+  song: SongMeta
 }
 
 export default function songToHtml (
@@ -68,7 +76,7 @@ export default function songToHtml (
   // 1. Title & key -----------------------------------------------------------
   const titleLine = lines[idx]?.trim() ?? "";
   const keyMatch = titleLine.match(/\[(\w[♯#♭b]?)]/);
-  const songKey = keyMatch ? normalizeKey(keyMatch[1]) : null; // e.g. "C", "F#"
+  let songKey: string | null = keyMatch ? normalizeKey(keyMatch[1]) : null; // e.g. "C", "F#"
   idx++;
 
   // 2. Helpers for number→chord --------------------------------------------
@@ -115,7 +123,32 @@ export default function songToHtml (
 
   // 4. Chord definitions -----------------------------------------------------
   const chordDefs: Record<string, string[]> = {}, chordDisplay: Record<string, string[]> = {};
+  let tempo: number | null = null;
+  let authors: string[] = [];
+  let timeSig: string | null = null;
   while (idx < lines.length && !/^\s*Sections:/i.test(lines[idx])) {
+    const meta = lines[idx].match(/^\s*(key|tempo|author|time):\s*(.+)$/i);
+    if (meta) {
+      const tag = meta[1].toLowerCase();
+      const val = meta[2].trim();
+      switch (tag) {
+        case 'key':
+          songKey = normalizeKey(val);
+          break;
+        case 'tempo':
+          const n = parseInt(val, 10);
+          if (!isNaN(n)) tempo = n;
+          break;
+        case 'author':
+          authors = val.split(',').map(a => a.trim()).filter(Boolean);
+          break;
+        case 'time':
+          timeSig = val;
+          break;
+      }
+      idx++;
+      continue;
+    }
     const m = lines[idx].match(/^[\s\t]*([\w \-]+):\s*(.+)$/);
     if (m) {
       const key = m[1].trim().toLowerCase();
@@ -209,7 +242,8 @@ export default function songToHtml (
   });
   out.push(`</article>`);
 
-  return {html:out.join("\n"),arrangements:Object.keys(arrangements)};
+  const song: SongMeta = { key: songKey, tempo, authors, time: timeSig };
+  return {html:out.join("\n"),arrangements:Object.keys(arrangements), song};
 
   // helper -------------------------------------------------------------
   function spanLine(s: string): string { return s.split(/\s+/).filter(Boolean).map(c => `<span class="chord">${esc(fmtChord(c))}</span>`).join(" ") }
