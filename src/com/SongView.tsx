@@ -1,5 +1,5 @@
 import {useEffect, useState} from 'react'
-import {useStateMachine} from 'ygdrassil'
+import {useStateMachine, StateButton} from 'ygdrassil'
 import {db, type Song} from '@/lib/db'
 import songToHtml from '@/lib/SongToHtml'
 import useLocalStore from '@/hook/useLocalStore'
@@ -50,5 +50,7 @@ export default function Song() {
     <div>
       <h2>{song.name}</h2>
       <div dangerouslySetInnerHTML={{__html: html}} />
+      <StateButton to='song-edit' data={{ id: song.id }}>Edit</StateButton>
     </div>
-  )}
+  )
+}
