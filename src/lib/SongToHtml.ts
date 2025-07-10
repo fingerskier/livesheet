@@ -217,6 +217,16 @@ export default function songToHtml (
   // 7. Build HTML ------------------------------------------------------------
   const out=[];
   out.push(`<article class="song">`);
+  const metaLines:string[]=[];
+  if(songKey) metaLines.push(`<p class="song-meta-key"><strong>Key:</strong> ${esc(songKey)}</p>`);
+  if(tempo!==null) metaLines.push(`<p class="song-meta-tempo"><strong>Tempo:</strong> ${tempo}</p>`);
+  if(timeSig) metaLines.push(`<p class="song-meta-time"><strong>Time:</strong> ${esc(timeSig)}</p>`);
+  if(authors.length) metaLines.push(`<p class="song-meta-authors"><strong>Author${authors.length>1?"s":""}:</strong> ${esc(authors.join(', '))}</p>`);
+  if(metaLines.length){
+    out.push(`<section class="song-meta">`);
+    metaLines.forEach(m=>out.push(m));
+    out.push(`</section>`);
+  }
   out.push(`<section class="song-chords"><h3 class="chords-title">Chords</h3>`);
   chosenArr.forEach(sec=>{
     const disp = chordDisplay[sectionType(sec)]||[];

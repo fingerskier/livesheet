@@ -102,3 +102,11 @@
 .lyric-line {
   width: auto;
 }
+
+.song-meta {
+  text-align: left;
+  margin-bottom: 1rem;
+}
+.song-meta p {
+  margin: 0;
+}
