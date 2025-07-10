@@ -18,18 +18,9 @@ import '@/style/App.css'
 
 
 export default function App() {
-  const [printMode, setPrintMode] = useState(false)
-
   return <>
-    <button
-      className='print mode button'
-      type='button' onClick={() => setPrintMode(!printMode)}
-    >
-        {Icon.DEVICE.PRINTER}🖨️
-    </button>
-
     <StateMachine name='live' initial='idle'>
-      {!printMode && <Navigation />}
+      <Navigation />
 
       <div className='main container'>
         <State name='idle'>
@@ -73,6 +64,6 @@ export default function App() {
         </State>
       </div>
 
-      {!printMode && <Controls />}
+      <Controls />
     </StateMachine>
   </>}

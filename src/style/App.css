@@ -57,6 +57,26 @@
   .navigation {
     display: none !important;
   }
+
+  .main.container {
+    position: static;
+    width: 100%;
+    height: auto;
+    padding: 0;
+    margin: 0;
+    
+    background-color: transparent;
+    box-shadow: none;
+    
+    color: hsl(270, 100%, 4%);
+
+    height: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
+
+    /* Optional: force page breaks inside */
+    page-break-inside: auto;
+  }
 }
 
 .print.mode.button {
