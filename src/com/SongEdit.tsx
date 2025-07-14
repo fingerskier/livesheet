@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react'
-import { useStateMachine } from 'ygdrassil'
+import { useStateMachine, StateButton } from 'ygdrassil'
 import { db, type Song } from '../lib/db'
 
 export default function SongEdit() {
-  const { query, gotoState } = useStateMachine()
+  const { query } = useStateMachine()
   const [song, setSong] = useState<Song | null>(null)
   const [name, setName] = useState('')
   const [text, setText] = useState('')
@@ -29,11 +29,6 @@ export default function SongEdit() {
     await db.songs.put({ ...song, name, text })
   }
 
-  async function handleSaveAndView() {
-    if (!song) return
-    await db.songs.put({ ...song, name, text })
-    gotoState('song-view', { id: song.id })
-  }
 
   if (!song) return <p>Select a song to edit.</p>
 
@@ -43,6 +38,10 @@ export default function SongEdit() {
     <textarea value={text} onChange={e => setText(e.target.value)} />
     <br />
     <button type='submit'>Save</button>
-    <button type='button' onClick={handleSaveAndView}>Save &amp; View</button>
+    <StateButton
+      className='dont print'
+      to='song-view'
+      data={{ id: song.id }}
+    >View</StateButton>
   </form>
 }

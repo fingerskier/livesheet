@@ -65,3 +65,22 @@ Arrangements:
 ## Sets
 
 A set is a collection of songs/arrangements
+
+
+## Chord Notation
+
+C or 1 - Major
+- in this case 1 would be the root chord of the key
+Dm or just 2 - Minor
+- whether its minor depends on the key (2,3,6 are minor)
+F/A or F/5 or 4/5 - bass note
+- indicates a chord inversion with the A or 5 as the bass note
+- in slash chords the numbers are relative to the _chord_ root, not the key root
+F\D or F\3 or 4\3 - treble note
+- indicates a chord inversion with the D or 3 as the treble note
+- re: in slash chords the numbers are relative to the _chord_ root, not the key root
+G-BCD or G-bcd or G-671 - chord melody
+- the part after the dash is the melody notes
+- in dash chords the numbers are relative to the _key_ root, not the chord root
+A7 or 67 - position indicator
+- a number after a chord indicates the position of the chord on the fretboard, or octave on piano
