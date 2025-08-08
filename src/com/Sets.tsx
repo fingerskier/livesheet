@@ -20,7 +20,9 @@ export default function Sets() {
     <StateButton to='set-add'>{Icon.PLUS}</StateButton>
     <ul>
       {sets.map(set => <li key={set.id}>
-        <StateButton to='set-edit' data={{ id: set.id }}>{set.name}</StateButton>
+        {set.name}
+        <StateButton to='set-view' data={{ id: set.id }}>{Icon.EYE}</StateButton>
+        <StateButton to='set-edit' data={{ id: set.id }}>{Icon.PENCIL}</StateButton>
       </li>)}
     </ul>
   </div>
