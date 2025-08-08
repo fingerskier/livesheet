@@ -53,14 +53,14 @@ export default function Live() {
       const scrollable = document.body.scrollHeight > window.innerHeight
       if (e.key === 'PageDown') {
         const atBottom = window.innerHeight + window.scrollY >= document.body.scrollHeight - 2
-        if (scrollable && atBottom) {
+        if (!scrollable || atBottom) {
           e.preventDefault()
           scrollTarget.current = 'top'
           setIndex(i => Math.min(i + 1, songs.length - 1))
         }
       } else if (e.key === 'PageUp') {
         const atTop = window.scrollY <= 0
-        if (scrollable && atTop) {
+        if (!scrollable || atTop) {
           e.preventDefault()
           scrollTarget.current = 'bottom'
           setIndex(i => Math.max(i - 1, 0))
