@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useStateMachine } from 'ygdrassil'
 import { db } from '../lib/db'
 import songToHtml from '@/lib/SongToHtml'
@@ -15,6 +15,7 @@ export default function Live() {
   const { query } = useStateMachine()
   const [songs, setSongs] = useState<ViewSong[]>([])
   const [index, setIndex] = useState(0)
+  const scrollTarget = useRef<'top' | 'bottom'>('top')
   const store = useLocalStore()
 
   useEffect(() => {
@@ -53,12 +54,14 @@ export default function Live() {
         const atBottom = window.innerHeight + window.scrollY >= document.body.scrollHeight - 2
         if (atBottom) {
           e.preventDefault()
+          scrollTarget.current = 'top'
           setIndex(i => Math.min(i + 1, songs.length - 1))
         }
       } else if (e.key === 'PageUp') {
         const atTop = window.scrollY <= 0
         if (atTop) {
           e.preventDefault()
+          scrollTarget.current = 'bottom'
           setIndex(i => Math.max(i - 1, 0))
         }
       }
@@ -68,7 +71,11 @@ export default function Live() {
   }, [songs.length])
 
   useEffect(() => {
-    window.scrollTo({ top: 0 })
+    if (scrollTarget.current === 'top') {
+      window.scrollTo({ top: 0 })
+    } else {
+      window.scrollTo({ top: document.body.scrollHeight })
+    }
   }, [index])
 
   useEffect(() => {
@@ -108,8 +115,22 @@ export default function Live() {
     <div>
       <h2>{current.name}</h2>
       <div className='dont print'>
-        <button type='button' onClick={() => setIndex(i => Math.max(i - 1, 0))} disabled={index === 0}>{Icon.ARROW.LEFT}</button>
-        <button type='button' onClick={() => setIndex(i => Math.min(i + 1, songs.length - 1))} disabled={index === songs.length - 1}>{Icon.ARROW.RIGHT}</button>
+        <button
+          type='button'
+          onClick={() => {
+            scrollTarget.current = 'top'
+            setIndex(i => Math.max(i - 1, 0))
+          }}
+          disabled={index === 0}
+        >{Icon.ARROW.LEFT}</button>
+        <button
+          type='button'
+          onClick={() => {
+            scrollTarget.current = 'top'
+            setIndex(i => Math.min(i + 1, songs.length - 1))
+          }}
+          disabled={index === songs.length - 1}
+        >{Icon.ARROW.RIGHT}</button>
       </div>
       <div dangerouslySetInnerHTML={{ __html: current.html }} />
     </div>
