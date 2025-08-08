@@ -50,16 +50,26 @@ export default function Live() {
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if (e.key === 'PageDown') {
-        e.preventDefault()
-        setIndex(i => Math.min(i + 1, songs.length - 1))
+        const atBottom = window.innerHeight + window.scrollY >= document.body.scrollHeight - 2
+        if (atBottom) {
+          e.preventDefault()
+          setIndex(i => Math.min(i + 1, songs.length - 1))
+        }
       } else if (e.key === 'PageUp') {
-        e.preventDefault()
-        setIndex(i => Math.max(i - 1, 0))
+        const atTop = window.scrollY <= 0
+        if (atTop) {
+          e.preventDefault()
+          setIndex(i => Math.max(i - 1, 0))
+        }
       }
     }
     window.addEventListener('keydown', handler)
     return () => window.removeEventListener('keydown', handler)
   }, [songs.length])
+
+  useEffect(() => {
+    window.scrollTo({ top: 0 })
+  }, [index])
 
   useEffect(() => {
     const current = songs[index]
