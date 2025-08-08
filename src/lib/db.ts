@@ -10,11 +10,17 @@ export type Song = {
   text: string
 }
 
+export type SetSong = {
+  songId: string
+  arrangement: string
+  key: string
+}
+
 export type Set = {
   id: string      // UUID v4
   name: string
   date: number   // Unix ms
-  songs: Song[]   // list of song IDs
+  songs: SetSong[]
 }
 
 
