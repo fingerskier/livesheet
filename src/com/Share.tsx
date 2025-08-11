@@ -24,6 +24,6 @@ export default function Share() {
       <option value=''>Select a song</option>
       {songs.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
     </select>
-    {data && <div><QRCodeSVG value={data} size={200} /></div>}
+    {data && <div><QRCodeSVG value={data} size={500} /></div>}
   </div>
 }
