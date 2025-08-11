@@ -118,7 +118,7 @@ export default function SetEditor({ initialSet = null, onSave }: Props) {
         <input value={s.key} onChange={e => updateSong(i, { key: e.target.value })} />
         <button type='button' disabled={i === 0} onClick={() => moveSong(i, -1)}>{Icon.ARROW.UP}</button>
         <button type='button' disabled={i === songs.length - 1} onClick={() => moveSong(i, 1)}>{Icon.ARROW.DOWN}</button>
-        <button type='button' onClick={() => removeSong(i)}>{Icon.CROSS}</button>
+        <button type='button' onClick={() => removeSong(i)}>{Icon.RED_X}</button>
       </li>)}
     </ul>
     <button type='submit'>Save</button>
