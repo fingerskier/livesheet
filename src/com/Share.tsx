@@ -1,5 +1,6 @@
 import {useEffect, useState} from 'react'
 import {db, type Song} from '@/lib/db'
+import {QRCodeSVG} from 'qrcode.react'
 
 export default function Share() {
   const [songs, setSongs] = useState<Song[]>([])
@@ -16,7 +17,6 @@ export default function Share() {
 
   const song = songs.find(s => s.id === songId)
   const data = song ? JSON.stringify(song) : ''
-  const url = song ? `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(data)}` : ''
 
   return <div>
     <h2>Share Song</h2>
@@ -24,6 +24,6 @@ export default function Share() {
       <option value=''>Select a song</option>
       {songs.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
     </select>
-    {url && <div><img src={url} alt='QR Code' /></div>}
+    {data && <div><QRCodeSVG value={data} size={200} /></div>}
   </div>
 }
