@@ -7,6 +7,8 @@ export default function Navigation() {
     <StateButton to='song-add'>Add Song</StateButton>
     <StateButton to='sets'>All Sets</StateButton>
     <StateButton to='set-add'>Add Set</StateButton>
+    <StateButton to='share'>Share</StateButton>
+    <StateButton to='share-scan'>Scan</StateButton>
     <StateButton to='settings'>Settings</StateButton>
   </div>
 }
