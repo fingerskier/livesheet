@@ -13,6 +13,8 @@ import SetEdit from '@/com/SetEdit'
 import Live from '@/com/SetView'
 import Settings from '@/com/Settings'
 import Song from '@/com/SongView'
+import Share from '@/com/Share'
+import ShareScan from '@/com/ShareScan'
 
 import '@/style/App.css'
 
@@ -81,6 +83,14 @@ export default function App() {
 
         <State name='set-view'>
           <Live />
+        </State>
+
+        <State name='share'>
+          <Share />
+        </State>
+
+        <State name='share-scan'>
+          <ShareScan />
         </State>
 
         <State name='settings'>
